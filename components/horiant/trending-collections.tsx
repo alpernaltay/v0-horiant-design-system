@@ -6,7 +6,7 @@ const watches = [
     brand: "Patek Philippe",
     model: "Nautilus 5711/1A",
     image: "/images/watch-nautilus.jpg",
-    ref: "5711/1A-010",
+    reference: "5711/1A-010",
     movement: "Cal. 26-330 S C",
     price: "$148,500",
   },
@@ -14,7 +14,7 @@ const watches = [
     brand: "Audemars Piguet",
     model: 'Royal Oak "Jumbo"',
     image: "/images/watch-royal-oak.jpg",
-    ref: "16202ST.OO.1240ST.01",
+    reference: "16202ST.OO.1240ST.01",
     movement: "Cal. 7121",
     price: "$72,000",
   },
@@ -22,7 +22,7 @@ const watches = [
     brand: "Rolex",
     model: "Submariner Date",
     image: "/images/watch-submariner.jpg",
-    ref: "126610LN",
+    reference: "126610LN",
     movement: "Cal. 3235",
     price: "$14,200",
   },
@@ -32,7 +32,7 @@ function WatchCard({
   brand,
   model,
   image,
-  ref: reference,
+  reference,
   movement,
   price,
 }: (typeof watches)[0]) {
@@ -115,7 +115,7 @@ export function TrendingCollections() {
         {/* Watch Grid */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {watches.map((watch) => (
-            <WatchCard key={watch.ref} {...watch} />
+            <WatchCard key={watch.reference} {...watch} />
           ))}
         </div>
       </div>
