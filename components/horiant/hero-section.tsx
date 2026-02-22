@@ -2,7 +2,11 @@
 
 import { ChevronDown } from "lucide-react"
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onViewSpecs: () => void
+}
+
+export function HeroSection({ onViewSpecs }: HeroSectionProps) {
   return (
     <section className="mesh-gradient noise-overlay relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
       {/* Subtle radial highlight behind text */}
@@ -33,15 +37,15 @@ export function HeroSection() {
 
         {/* Buttons */}
         <div className="mt-14 flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-          <a
-            href="#specs"
+          <button
+            onClick={onViewSpecs}
             className="group relative inline-flex items-center gap-2 border border-[#D4AF37]/40 px-8 py-3 text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] transition-all duration-500 hover:border-[#D4AF37]/80 hover:bg-[#D4AF37]/5"
           >
             View Specs
             <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">
               {"->"}
             </span>
-          </a>
+          </button>
           <button className="inline-flex items-center gap-2 px-8 py-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-all duration-500 hover:text-foreground">
             Add to SOTC
           </button>

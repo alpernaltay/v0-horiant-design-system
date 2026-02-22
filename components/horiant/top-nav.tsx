@@ -3,7 +3,14 @@
 import { useState } from "react"
 import { Search, User, X, Menu } from "lucide-react"
 
-export function TopNav() {
+type View = "discover" | "watchDetail" | "sotcProfile"
+
+interface TopNavProps {
+  activeView: View
+  onNavigate: (view: View) => void
+}
+
+export function TopNav({ activeView, onNavigate }: TopNavProps) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -12,18 +19,26 @@ export function TopNav() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
         {/* Left Links */}
         <div className="hidden items-center gap-8 md:flex">
-          <a
-            href="#discover"
-            className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+          <button
+            onClick={() => onNavigate("discover")}
+            className={`text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
+              activeView === "discover"
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             Discover
-          </a>
-          <a
-            href="#sotc"
-            className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+          </button>
+          <button
+            onClick={() => onNavigate("sotcProfile")}
+            className={`text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
+              activeView === "sotcProfile"
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             SOTC
-          </a>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -36,11 +51,14 @@ export function TopNav() {
         </button>
 
         {/* Center Logo */}
-        <a href="#" className="absolute left-1/2 -translate-x-1/2">
+        <button
+          onClick={() => onNavigate("discover")}
+          className="absolute left-1/2 -translate-x-1/2"
+        >
           <span className="font-serif text-xl tracking-[0.25em] text-[#D4AF37]">
             HORIANT
           </span>
-        </a>
+        </button>
 
         {/* Right Icons */}
         <div className="flex items-center gap-6">
@@ -70,6 +88,7 @@ export function TopNav() {
             </button>
           )}
           <button
+            onClick={() => onNavigate("sotcProfile")}
             className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
             aria-label="Profile"
           >
@@ -82,18 +101,32 @@ export function TopNav() {
       {mobileMenuOpen && (
         <div className="border-t border-border bg-[#0A0F16]/95 px-6 py-6 backdrop-blur-xl md:hidden">
           <div className="flex flex-col gap-4">
-            <a
-              href="#discover"
-              className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            <button
+              onClick={() => {
+                onNavigate("discover")
+                setMobileMenuOpen(false)
+              }}
+              className={`text-left text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
+                activeView === "discover"
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               Discover
-            </a>
-            <a
-              href="#sotc"
-              className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            </button>
+            <button
+              onClick={() => {
+                onNavigate("sotcProfile")
+                setMobileMenuOpen(false)
+              }}
+              className={`text-left text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
+                activeView === "sotcProfile"
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               SOTC
-            </a>
+            </button>
           </div>
         </div>
       )}
