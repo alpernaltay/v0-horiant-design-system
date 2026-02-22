@@ -1,8 +1,16 @@
 "use client"
 
 import Image from "next/image"
-import { ArrowLeft, TrendingUp, CheckCircle2, Star, ThumbsUp } from "lucide-react"
-import type { WatchData } from "./discover-grid"
+import {
+  ArrowLeft,
+  TrendingUp,
+  CheckCircle2,
+  Star,
+  ThumbsUp,
+  Heart,
+  Plus,
+} from "lucide-react"
+import { expertReviews, type WatchData } from "@/lib/mock-watches"
 
 function BentoCard({
   children,
@@ -19,25 +27,6 @@ function BentoCard({
     </div>
   )
 }
-
-const reviews = [
-  {
-    author: "WatchScholar_CH",
-    avatar: "WS",
-    date: "14 Feb 2026",
-    rating: 5,
-    title: "Caliber finishing is beyond reproach",
-    body: "Having examined this reference under a loupe, the level of hand-finishing on the movement is extraordinary. The three-quarter plate features impeccable Glashutte ribbing, and the hand-engraved balance cock is a work of art unto itself. The column-wheel chronograph operates with a tactile precision that puts most Swiss competitors to shame. This is, quite simply, the finest manually-wound chronograph movement in production today.",
-  },
-  {
-    author: "HorologistMark",
-    avatar: "HM",
-    date: "3 Jan 2026",
-    rating: 4,
-    title: "Lug-to-lug wearability is the surprise standout",
-    body: "On paper, 41mm with 13.1mm thickness sounds chunky for a dress chronograph. In practice, the case is superbly sculpted. The downturned lugs hug a 17cm wrist beautifully, and the slim bezel makes the dial feel expansive. The platinum version carries real heft, but it sits flat and stable. I wore it comfortably under a French cuff for a full evening. Lange understands ergonomics far better than the spec sheet suggests.",
-  },
-]
 
 interface WatchDetailProps {
   watch: WatchData
@@ -70,6 +59,18 @@ export function WatchDetail({ watch, onBack }: WatchDetailProps) {
           </p>
         </div>
 
+        {/* Action Buttons */}
+        <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:gap-6">
+          <button className="group inline-flex items-center justify-center gap-3 border border-[#D4AF37]/40 px-10 py-4 text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] transition-all duration-500 hover:border-[#D4AF37]/80 hover:bg-[#D4AF37]/5">
+            <Plus className="h-4 w-4" />
+            Add to SOTC
+          </button>
+          <button className="group inline-flex items-center justify-center gap-3 border border-white/[0.06] px-10 py-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-all duration-500 hover:border-white/[0.15] hover:text-foreground">
+            <Heart className="h-4 w-4" />
+            Add to Wishlist
+          </button>
+        </div>
+
         {/* Bento Grid */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
           {/* Box 1: Large Image */}
@@ -96,21 +97,29 @@ export function WatchDetail({ watch, onBack }: WatchDetailProps) {
             </h3>
             <div className="flex flex-col gap-4">
               <div className="flex items-baseline justify-between border-b border-white/[0.04] pb-3">
-                <span className="text-xs text-muted-foreground">Power Reserve</span>
-                <span className="font-mono text-sm text-foreground">{watch.powerReserve}</span>
+                <span className="text-xs text-muted-foreground">
+                  Power Reserve
+                </span>
+                <span className="font-mono text-sm text-foreground">
+                  {watch.powerReserve}
+                </span>
               </div>
               <div className="flex items-baseline justify-between border-b border-white/[0.04] pb-3">
                 <span className="text-xs text-muted-foreground">Frequency</span>
-                <span className="font-mono text-sm text-foreground">{watch.frequency}</span>
+                <span className="font-mono text-sm text-foreground">
+                  {watch.frequency}
+                </span>
               </div>
               <div className="flex items-baseline justify-between">
                 <span className="text-xs text-muted-foreground">Jewels</span>
-                <span className="font-mono text-sm text-foreground">{watch.jewels}</span>
+                <span className="font-mono text-sm text-foreground">
+                  {watch.jewels}
+                </span>
               </div>
             </div>
           </BentoCard>
 
-          {/* Box 3: Dimensions */}
+          {/* Box 3: Dimensions + Wrist Match */}
           <BentoCard>
             <p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">
               Dimensions
@@ -120,19 +129,27 @@ export function WatchDetail({ watch, onBack }: WatchDetailProps) {
             </h3>
             <div className="flex flex-col gap-4">
               <div className="flex items-baseline justify-between border-b border-white/[0.04] pb-3">
-                <span className="text-xs text-muted-foreground">Case Diameter</span>
-                <span className="font-mono text-sm text-foreground">{watch.caseDiameter}</span>
+                <span className="text-xs text-muted-foreground">
+                  Case Diameter
+                </span>
+                <span className="font-mono text-sm text-foreground">
+                  {watch.caseDiameter}
+                </span>
               </div>
               <div className="flex items-baseline justify-between border-b border-white/[0.04] pb-3">
                 <span className="text-xs text-muted-foreground">Thickness</span>
-                <span className="font-mono text-sm text-foreground">{watch.thickness}</span>
+                <span className="font-mono text-sm text-foreground">
+                  {watch.thickness}
+                </span>
               </div>
               <div className="flex items-baseline justify-between border-b border-white/[0.04] pb-3">
                 <span className="text-xs text-muted-foreground">Material</span>
-                <span className="font-mono text-sm text-foreground">{watch.material}</span>
+                <span className="font-mono text-sm text-foreground">
+                  {watch.material}
+                </span>
               </div>
-              {/* Wrist Match Feature */}
-              <div className="flex items-center gap-2 rounded-md bg-emerald-500/5 border border-emerald-500/10 px-3 py-2.5">
+              {/* Wrist Match Badge */}
+              <div className="flex items-center gap-2 rounded-md border border-emerald-500/10 bg-emerald-500/5 px-3 py-2.5">
                 <CheckCircle2 className="h-4 w-4 text-emerald-400" />
                 <span className="text-xs text-emerald-300/90">
                   Perfect fit for your 17cm wrist
@@ -141,7 +158,7 @@ export function WatchDetail({ watch, onBack }: WatchDetailProps) {
             </div>
           </BentoCard>
 
-          {/* Box 4: Market Value - spans 2 cols */}
+          {/* Box 4: Market Value */}
           <BentoCard className="lg:col-span-2">
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
               <div>
@@ -179,26 +196,25 @@ export function WatchDetail({ watch, onBack }: WatchDetailProps) {
           </BentoCard>
         </div>
 
-        {/* Community Reviews Section */}
+        {/* Horologist Reviews */}
         <div className="mt-24">
           <div className="gold-line mx-auto mb-24 max-w-xs" />
 
           <div className="mb-16">
             <p className="mb-4 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">
-              Community
+              Horologist Reviews
             </p>
             <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl">
-              <span className="text-balance">Expert Reviews</span>
+              <span className="text-balance">Expert Perspectives</span>
             </h2>
           </div>
 
           <div className="flex flex-col gap-6">
-            {reviews.map((review) => (
+            {expertReviews.map((review) => (
               <article
                 key={review.author}
                 className="card-glow rounded-lg border border-white/[0.04] bg-gradient-to-b from-[#131920] to-[#0d1117] p-8 lg:p-10"
               >
-                {/* Review header */}
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5">
@@ -208,7 +224,9 @@ export function WatchDetail({ watch, onBack }: WatchDetailProps) {
                     </div>
                     <div>
                       <p className="text-sm text-foreground">{review.author}</p>
-                      <p className="text-[11px] text-muted-foreground">{review.date}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {review.date}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -225,15 +243,13 @@ export function WatchDetail({ watch, onBack }: WatchDetailProps) {
                   </div>
                 </div>
 
-                {/* Review content */}
                 <h3 className="mb-4 font-serif text-xl font-light tracking-tight text-foreground">
                   {review.title}
                 </h3>
-                <p className="font-serif text-sm font-light leading-relaxed text-muted-foreground/80 italic">
-                  {`"${review.body}"`}
+                <p className="font-serif text-sm font-light italic leading-relaxed text-muted-foreground/80">
+                  {`\u201C${review.body}\u201D`}
                 </p>
 
-                {/* Review footer */}
                 <div className="mt-6 flex items-center gap-4 border-t border-white/[0.04] pt-5">
                   <button className="flex items-center gap-2 text-[11px] text-muted-foreground transition-colors duration-300 hover:text-foreground">
                     <ThumbsUp className="h-3 w-3" />

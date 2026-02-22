@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search, User, X, Menu } from "lucide-react"
+import { Search, User, X, Menu, Heart } from "lucide-react"
 
 type View = "discover" | "watchDetail" | "sotcProfile"
 
@@ -30,14 +30,14 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
             Discover
           </button>
           <button
-            onClick={() => onNavigate("sotcProfile")}
-            className={`text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
-              activeView === "sotcProfile"
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+            className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
           >
-            SOTC
+            Brands
+          </button>
+          <button
+            className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+          >
+            Community
           </button>
         </div>
 
@@ -47,7 +47,11 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
           className="text-muted-foreground transition-colors hover:text-foreground md:hidden"
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {mobileMenuOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <Menu className="h-5 w-5" />
+          )}
         </button>
 
         {/* Center Logo */}
@@ -61,7 +65,7 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
         </button>
 
         {/* Right Icons */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-5">
           {searchOpen ? (
             <div className="flex items-center gap-3">
               <input
@@ -88,11 +92,21 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
             </button>
           )}
           <button
-            onClick={() => onNavigate("sotcProfile")}
             className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
-            aria-label="Profile"
+            aria-label="Wishlist"
+          >
+            <Heart className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => onNavigate("sotcProfile")}
+            className={`flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
+              activeView === "sotcProfile"
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             <User className="h-4 w-4" />
+            <span className="hidden lg:inline">My SOTC</span>
           </button>
         </div>
       </div>
@@ -115,6 +129,18 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
               Discover
             </button>
             <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-left text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            >
+              Brands
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-left text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            >
+              Community
+            </button>
+            <button
               onClick={() => {
                 onNavigate("sotcProfile")
                 setMobileMenuOpen(false)
@@ -125,7 +151,7 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              SOTC
+              My SOTC
             </button>
           </div>
         </div>
