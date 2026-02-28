@@ -284,15 +284,24 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
                         ) : (
                             <div className="mt-2 flex flex-col gap-1">
                                 {c.replies.slice(0, visibleRepliesCount).map((reply: any) => renderComment(reply, depth + 1))}
-                                {visibleRepliesCount < c.replies.length && (
+                                <div className="ml-4 mt-2 flex items-center gap-4">
+                                    {visibleRepliesCount < c.replies.length && (
+                                        <button
+                                            onClick={() => setExpandedReplies(prev => ({ ...prev, [c.id]: (prev[c.id] || 3) + 3 }))}
+                                            className="flex items-center gap-2 text-[10px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                                        >
+                                            <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
+                                            Show more
+                                        </button>
+                                    )}
                                     <button
-                                        onClick={() => setExpandedReplies(prev => ({ ...prev, [c.id]: (prev[c.id] || 3) + 3 }))}
-                                        className="ml-4 mt-2 flex items-center gap-2 text-[10px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                                        onClick={() => setExpandedReplies(prev => { const next = { ...prev }; delete next[c.id]; return next; })}
+                                        className={`flex items-center gap-2 text-[10px] font-medium tracking-wide transition-colors ${visibleRepliesCount >= c.replies.length ? "text-[#D4AF37]/80 hover:text-[#D4AF37]" : "text-muted-foreground/60 hover:text-white"}`}
                                     >
-                                        <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
-                                        Show more
+                                        {visibleRepliesCount >= c.replies.length && <span className="h-[1px] w-6 bg-[#D4AF37]/40" />}
+                                        Hide
                                     </button>
-                                )}
+                                </div>
                             </div>
                         )}
                     </div>

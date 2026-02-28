@@ -327,15 +327,24 @@ export function ReviewItem({ review, onReply, onDelete, onEdit, userVotes, isRep
                                     />
                                 </div>
                             ))}
-                            {visibleReplies < review.replies.length && (
+                            <div className="ml-4 mt-3 flex items-center gap-4">
+                                {visibleReplies < review.replies.length && (
+                                    <button
+                                        onClick={() => setVisibleReplies(v => v + 3)}
+                                        className="flex items-center gap-2 text-[11px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                                    >
+                                        <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
+                                        Show more
+                                    </button>
+                                )}
                                 <button
-                                    onClick={() => setVisibleReplies(v => v + 3)}
-                                    className="ml-4 mt-3 flex items-center gap-2 text-[11px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                                    onClick={() => { setRepliesExpanded(false); setVisibleReplies(3); }}
+                                    className={`flex items-center gap-2 text-[11px] font-medium tracking-wide transition-colors ${visibleReplies >= review.replies.length ? "text-[#D4AF37]/80 hover:text-[#D4AF37]" : "text-muted-foreground/60 hover:text-white"}`}
                                 >
-                                    <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
-                                    Show more
+                                    {visibleReplies >= review.replies.length && <span className="h-[1px] w-6 bg-[#D4AF37]/40" />}
+                                    Hide
                                 </button>
-                            )}
+                            </div>
                         </div>
                     )}
                 </div>

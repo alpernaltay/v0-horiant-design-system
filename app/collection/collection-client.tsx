@@ -19,7 +19,8 @@ export function CollectionClient({
     legacyScore,
     totalPieces,
     totalComplications,
-    isAdmin
+    isAdmin,
+    initialWristRolls
 }: {
     watches: CollectionWatchItem[]
     wishlistWatches: WishlistWatchItem[]
@@ -34,6 +35,7 @@ export function CollectionClient({
     totalPieces?: number
     totalComplications?: number
     isAdmin?: boolean
+    initialWristRolls?: any[]
 }) {
     return (
         <main className="relative min-h-screen bg-background">
@@ -52,6 +54,7 @@ export function CollectionClient({
                 totalPieces={totalPieces}
                 totalComplications={totalComplications}
                 isAdmin={isAdmin}
+                initialWristRolls={initialWristRolls}
             />
         </main>
     )

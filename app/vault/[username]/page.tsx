@@ -63,18 +63,22 @@ export default async function PublicVaultPage({
         notFound()
     }
 
-    // 2. Fetch their collection and wishlist
-    const watches = await getUserCollection(profile.id)
-    const wishlistWatches = await getUserWishlist(profile.id)
+    // 2. Fetch their collection, wishlist, reviews, wrist rolls, and session in Parallel
+    const [
+        watches,
+        wishlistWatches,
+        topLevelReviews,
+        wristRolls,
+        { data: { session } }
+    ] = await Promise.all([
+        getUserCollection(profile.id),
+        getUserWishlist(profile.id),
+        getReviewsForProfile(profile.id),
+        getWristRollsByProfile(profile.id),
+        supabase.auth.getSession()
+    ])
 
-    const { data: { session } } = await supabase.auth.getSession()
     const isOwner = session?.user?.id === profile.id || profile.username === session?.user?.user_metadata?.username;
-
-    // 3. Fetch reviews directed at this profile
-    const topLevelReviews = await getReviewsForProfile(profile.id)
-
-    // 4. Fetch wrist rolls for the new Wrist Shots tab
-    const wristRolls = await getWristRollsByProfile(profile.id)
 
     // We can fetch wishlist if we want, currently we just map watches
     // Ensure nested watches array gets flattened if we must

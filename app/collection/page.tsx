@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getUserCollection } from "@/lib/actions/collections"
 import { getUserWishlist } from "@/lib/actions/wishlists"
 import { getReviewsForProfile } from "@/lib/actions/reviews"
+import { getWristRollsByProfile } from "@/lib/actions/wrist-rolls"
 import { CollectionClient } from "./collection-client"
 
 export const dynamic = "force-dynamic"
@@ -22,15 +23,19 @@ export default async function CollectionPage() {
         redirect("/login")
     }
 
-    const watches = await getUserCollection(user.id)
-    const wishlistWatches = await getUserWishlist(user.id)
-
-    // Fetch profile for vault image and settings
-    const { data: profileRaw } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single()
+    const [
+        watches,
+        wishlistWatches,
+        { data: profileRaw },
+        topLevelReviews,
+        wristRolls
+    ] = await Promise.all([
+        getUserCollection(user.id),
+        getUserWishlist(user.id),
+        supabase.from("profiles").select("*").eq("id", user.id).single(),
+        getReviewsForProfile(user.id),
+        getWristRollsByProfile(user.id)
+    ])
 
     const profile = profileRaw as any
 
@@ -41,8 +46,6 @@ export default async function CollectionPage() {
     const totalPieces = profile?.total_pieces || 0
     const totalComps = profile?.total_complications || 0
     const isAdmin = !!profile?.is_admin
-
-    const topLevelReviews = await getReviewsForProfile(user.id)
 
     return <CollectionClient
         watches={watches}
@@ -58,5 +61,6 @@ export default async function CollectionPage() {
         currentUserId={user.id}
         isOwner={true}
         isAdmin={isAdmin}
+        initialWristRolls={wristRolls}
     />
 }

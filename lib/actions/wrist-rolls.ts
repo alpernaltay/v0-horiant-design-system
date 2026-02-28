@@ -188,7 +188,7 @@ export async function getWristRollComments(wristRollId: string) {
     const supabase = await createClient()
     const { data, error } = await (supabase as any)
         .from("wrist_roll_comments")
-        .select(`id, content, created_at, user_id, parent_id, profiles ( username, avatar_url )`)
+        .select(`id, content, created_at, user_id, parent_id, likes, dislikes, profiles ( username, avatar_url )`)
         .eq("wrist_roll_id", wristRollId)
         .order("created_at", { ascending: true })
     if (error) { console.error("Error fetching comments:", error.message ?? error); return [] }
@@ -230,7 +230,7 @@ export async function voteWristRollComment(commentId: string, voteType: "up" | "
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { vote: null, error: "Not authenticated." }
 
-    // Check existing vote
+    // Fetch existing logic
     const { data: existing } = await (supabase as any)
         .from("wrist_roll_comment_votes")
         .select("id, vote_type")
@@ -238,25 +238,59 @@ export async function voteWristRollComment(commentId: string, voteType: "up" | "
         .eq("comment_id", commentId)
         .maybeSingle()
 
+    // Fetch current counts from main table
+    const { data: commentRaw } = await (supabase as any)
+        .from('wrist_roll_comments')
+        .select('likes, dislikes')
+        .eq('id', commentId)
+        .single();
+
+    // In case the row has nulls, default to 0
+    const currentLikes = commentRaw?.likes || 0;
+    const currentDislikes = commentRaw?.dislikes || 0;
+
+    let finalVoteType: "up" | "down" | null = null;
+
     if (existing) {
         if (existing.vote_type === voteType) {
-            // Same vote = remove (toggle off)
+            // SCENARIO 1: Same vote -> Remove vote
             await (supabase as any).from("wrist_roll_comment_votes").delete().eq("id", existing.id)
-            revalidateAll()
-            return { vote: null }
+            const newCount = Math.max(0, (voteType === 'up' ? currentLikes : currentDislikes) - 1);
+            await (supabase as any).from("wrist_roll_comments").update({ [voteType + 's']: newCount }).eq("id", commentId)
+            finalVoteType = null;
+        } else {
+            // SCENARIO 2: Swap vote
+            await (supabase as any).from("wrist_roll_comment_votes").update({ vote_type: voteType }).eq("id", existing.id)
+            const oldType = existing.vote_type;
+            const newOldCount = Math.max(0, (oldType === 'up' ? currentLikes : currentDislikes) - 1);
+            const newCurrentCount = (voteType === 'up' ? currentLikes : currentDislikes) + 1;
+            await (supabase as any).from("wrist_roll_comments").update({
+                [oldType + 's']: newOldCount,
+                [voteType + 's']: newCurrentCount
+            }).eq("id", commentId)
+            finalVoteType = voteType;
         }
-        // Different vote = update
-        await (supabase as any).from("wrist_roll_comment_votes").update({ vote_type: voteType }).eq("id", existing.id)
-        revalidateAll()
-        return { vote: voteType }
+    } else {
+        // SCENARIO 3: New vote
+        await (supabase as any).from("wrist_roll_comment_votes").insert({ user_id: user.id, comment_id: commentId, vote_type: voteType })
+        const newCount = (voteType === 'up' ? currentLikes : currentDislikes) + 1;
+        await (supabase as any).from("wrist_roll_comments").update({ [voteType + 's']: newCount }).eq("id", commentId)
+        finalVoteType = voteType;
     }
 
-    // No existing vote = insert
-    await (supabase as any)
-        .from("wrist_roll_comment_votes")
-        .insert({ user_id: user.id, comment_id: commentId, vote_type: voteType })
     revalidateAll()
-    return { vote: voteType }
+
+    const { data: updatedComment } = await (supabase as any)
+        .from('wrist_roll_comments')
+        .select('likes, dislikes')
+        .eq('id', commentId)
+        .single();
+
+    return {
+        vote: finalVoteType,
+        likes: updatedComment?.likes || 0,
+        dislikes: updatedComment?.dislikes || 0
+    }
 }
 
 export async function getCommentVotes(commentIds: string[]) {
