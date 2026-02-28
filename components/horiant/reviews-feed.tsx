@@ -1,15 +1,15 @@
 "use client"
 
+import Link from "next/link"
 import { MessageSquare } from "lucide-react"
-import { communityReviewSnippets, trendingWatches, featuredWatch, type WatchData } from "@/lib/mock-watches"
+import { communityReviewSnippets } from "@/lib/mock-watches"
+import type { WatchData } from "@/lib/mock-watches"
 
 interface ReviewsFeedProps {
-  onSelectWatch: (watch: WatchData) => void
+  watches: WatchData[]
 }
 
-export function ReviewsFeed({ onSelectWatch }: ReviewsFeedProps) {
-  const allWatches = [featuredWatch, ...trendingWatches]
-
+export function ReviewsFeed({ watches = [] }: ReviewsFeedProps) {
   return (
     <section className="relative px-6 py-24 lg:py-32">
       <div className="mx-auto max-w-6xl">
@@ -24,11 +24,11 @@ export function ReviewsFeed({ onSelectWatch }: ReviewsFeedProps) {
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           {communityReviewSnippets.map((review) => {
-            const watch = allWatches.find((w) => w.id === review.watchId)
+            const watch = watches.find((w) => w.id === review.watchId)
             return (
-              <button
+              <Link
                 key={review.author}
-                onClick={() => watch && onSelectWatch(watch)}
+                href={`/watch/${review.watchId}`}
                 className="card-glow group rounded-lg border border-white/[0.04] bg-gradient-to-b from-[#131920]/80 to-[#0d1117]/80 p-7 text-left transition-all duration-500"
               >
                 <div className="mb-5 flex items-center justify-between">
@@ -60,7 +60,7 @@ export function ReviewsFeed({ onSelectWatch }: ReviewsFeedProps) {
                   <MessageSquare className="h-3 w-3" />
                   Read full review
                 </div>
-              </button>
+              </Link>
             )
           })}
         </div>

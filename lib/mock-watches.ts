@@ -11,6 +11,10 @@ export interface WatchData {
   rating: number
   caseDiameter: string
   thickness: string
+  lugToLug: string
+  waterResistance: string
+  crystal: string
+  bracelet: string
   material: string
   powerReserve: string
   frequency: string
@@ -22,6 +26,7 @@ export interface WatchData {
   complications: string[]
   legacy: string
   reviewSnippets: string[]
+  chrono24Url: string
 }
 
 export interface CollectionWatch {
@@ -33,6 +38,7 @@ export interface CollectionWatch {
   year: number
   verified: boolean
   complications: string[]
+  price: string
 }
 
 export interface ExpertReview {
@@ -65,6 +71,10 @@ export const featuredWatch: WatchData = {
   rating: 5.0,
   caseDiameter: "41.0 mm",
   thickness: "13.1 mm",
+  lugToLug: "47.0 mm",
+  waterResistance: "30 m",
+  crystal: "Sapphire",
+  bracelet: "Alligator Leather",
   material: "Platinum 950",
   powerReserve: "60 Hours",
   frequency: "18,000 vph",
@@ -80,6 +90,7 @@ export const featuredWatch: WatchData = {
     "The hand-engraved balance cock is a work of art unto itself.",
     "Lange understands ergonomics far better than the spec sheet suggests.",
   ],
+  chrono24Url: "https://www.chrono24.com/alangesohne/datograph--mod1163.htm",
 }
 
 // --- Trending / Discover Watches ---
@@ -96,6 +107,10 @@ export const trendingWatches: WatchData[] = [
     rating: 4.7,
     caseDiameter: "41.0 mm",
     thickness: "12.7 mm",
+    lugToLug: "47.5 mm",
+    waterResistance: "300 m",
+    crystal: "Sapphire (Cyclops)",
+    bracelet: "Oyster / Oystersteel",
     material: "Oystersteel",
     powerReserve: "70 Hours",
     frequency: "28,800 vph",
@@ -111,6 +126,7 @@ export const trendingWatches: WatchData[] = [
       "The quintessential tool watch that needs no introduction.",
       "70-hour power reserve is a game-changer for weekend wear.",
     ],
+    chrono24Url: "https://www.chrono24.com/rolex/submariner-date--mod79.htm",
   },
   {
     id: "speedmaster",
@@ -123,6 +139,10 @@ export const trendingWatches: WatchData[] = [
     rating: 4.8,
     caseDiameter: "42.0 mm",
     thickness: "13.2 mm",
+    lugToLug: "47.0 mm",
+    waterResistance: "50 m",
+    crystal: "Hesalite",
+    bracelet: "Stainless Steel",
     material: "Stainless Steel",
     powerReserve: "50 Hours",
     frequency: "21,600 vph",
@@ -138,6 +158,7 @@ export const trendingWatches: WatchData[] = [
       "The only watch certified for extravehicular activity by NASA.",
       "The hesalite crystal adds vintage charm you can feel on the wrist.",
     ],
+    chrono24Url: "https://www.chrono24.com/omega/speedmaster-professional-moonwatch--mod174.htm",
   },
   {
     id: "nautilus",
@@ -150,6 +171,10 @@ export const trendingWatches: WatchData[] = [
     rating: 4.9,
     caseDiameter: "40.0 mm",
     thickness: "8.3 mm",
+    lugToLug: "44.6 mm",
+    waterResistance: "120 m",
+    crystal: "Sapphire",
+    bracelet: "Integrated Steel",
     material: "Stainless Steel",
     powerReserve: "45 Hours",
     frequency: "28,800 vph",
@@ -165,6 +190,7 @@ export const trendingWatches: WatchData[] = [
       "At 8.3mm thick it practically disappears under a cuff.",
       "The blue dial shifts from navy to teal depending on the light.",
     ],
+    chrono24Url: "https://www.chrono24.com/patekphilippe/nautilus--mod34.htm",
   },
   {
     id: "snowflake",
@@ -177,6 +203,10 @@ export const trendingWatches: WatchData[] = [
     rating: 4.8,
     caseDiameter: "41.0 mm",
     thickness: "12.5 mm",
+    lugToLug: "48.0 mm",
+    waterResistance: "100 m",
+    crystal: "Sapphire (Dual-Curved)",
+    bracelet: "Titanium",
     material: "Titanium",
     powerReserve: "72 Hours",
     frequency: "28,800 vph",
@@ -192,6 +222,7 @@ export const trendingWatches: WatchData[] = [
       "The Spring Drive sweep is absolutely hypnotic in person.",
       "Arguably the best dial finishing under $10,000 anywhere.",
     ],
+    chrono24Url: "https://www.chrono24.com/grandseiko/ref-sbga211.htm",
   },
   {
     id: "reverso",
@@ -204,6 +235,10 @@ export const trendingWatches: WatchData[] = [
     rating: 4.6,
     caseDiameter: "45.6 \u00D7 27.4 mm",
     thickness: "9.1 mm",
+    lugToLug: "45.6 mm",
+    waterResistance: "30 m",
+    crystal: "Sapphire",
+    bracelet: "Alligator Leather",
     material: "Stainless Steel",
     powerReserve: "42 Hours",
     frequency: "21,600 vph",
@@ -219,6 +254,7 @@ export const trendingWatches: WatchData[] = [
       "One of the greatest industrial designs of the Art Deco era.",
       "The click-and-slide mechanism is endlessly satisfying.",
     ],
+    chrono24Url: "https://www.chrono24.com/jaegerlecoultre/reverso--mod22.htm",
   },
   {
     id: "royal-oak",
@@ -231,6 +267,10 @@ export const trendingWatches: WatchData[] = [
     rating: 4.9,
     caseDiameter: "39.0 mm",
     thickness: "8.1 mm",
+    lugToLug: "44.5 mm",
+    waterResistance: "50 m",
+    crystal: "Sapphire",
+    bracelet: "Integrated Steel",
     material: "Stainless Steel",
     powerReserve: "55 Hours",
     frequency: "28,800 vph",
@@ -246,10 +286,11 @@ export const trendingWatches: WatchData[] = [
       "At 8.1mm thick, it wears like a second skin under a cuff.",
       "The Tapisserie dial is a masterclass in light manipulation.",
     ],
+    chrono24Url: "https://www.chrono24.com/audemarspiguet/royal-oak--mod24.htm",
   },
 ]
 
-// --- SOTC Collection ---
+// --- The Collection ---
 
 export const sotcWatches: CollectionWatch[] = [
   {
@@ -261,6 +302,7 @@ export const sotcWatches: CollectionWatch[] = [
     year: 2023,
     verified: true,
     complications: ["Date", "Rotating Bezel"],
+    price: "$14,200",
   },
   {
     id: "snowflake",
@@ -271,6 +313,7 @@ export const sotcWatches: CollectionWatch[] = [
     year: 2022,
     verified: true,
     complications: ["Date", "Power Reserve Indicator"],
+    price: "$5,800",
   },
   {
     id: "speedmaster",
@@ -281,6 +324,7 @@ export const sotcWatches: CollectionWatch[] = [
     year: 2024,
     verified: false,
     complications: ["Chronograph", "Tachymeter"],
+    price: "$6,500",
   },
   {
     id: "reverso",
@@ -291,6 +335,7 @@ export const sotcWatches: CollectionWatch[] = [
     year: 2020,
     verified: false,
     complications: ["Small Seconds"],
+    price: "$5,500",
   },
 ]
 
@@ -350,7 +395,7 @@ export const communityReviewSnippets = [
   },
 ]
 
-// --- SOTC Community Comments ---
+// --- Community Comments ---
 
 export const communityComments: CommunityComment[] = [
   {
@@ -364,7 +409,7 @@ export const communityComments: CommunityComment[] = [
     author: "DialPursuit",
     avatar: "DP",
     timeAgo: "5h ago",
-    body: "The Snowflake is the real hero of this SOTC. Arguably the best finishing under $10k. And that Spring Drive sweep is hypnotic. Pair it with a navy suit and you will get compliments every single time.",
+    body: "The Snowflake is the real hero of this collection. Arguably the best finishing under $10k. And that Spring Drive sweep is hypnotic. Pair it with a navy suit and you will get compliments every single time.",
     likes: 23,
   },
   {
@@ -406,10 +451,14 @@ export function getFullWatchData(collectionWatch: CollectionWatch): WatchData {
     image: collectionWatch.image,
     reference: collectionWatch.reference,
     movement: "---",
-    price: "$5,500",
+    price: collectionWatch.price,
     rating: 4.8,
     caseDiameter: "41.0 mm",
     thickness: "12.0 mm",
+    lugToLug: "48.0 mm",
+    waterResistance: "100 m",
+    crystal: "Sapphire",
+    bracelet: "Steel",
     material: "Steel",
     powerReserve: "70 Hours",
     frequency: "28,800 vph",
@@ -421,6 +470,7 @@ export function getFullWatchData(collectionWatch: CollectionWatch): WatchData {
     complications: collectionWatch.complications,
     legacy: "A distinguished timepiece with a rich heritage in the art of horology.",
     reviewSnippets: ["A solid choice for any discerning collector."],
+    chrono24Url: "https://www.chrono24.com",
   }
 }
 

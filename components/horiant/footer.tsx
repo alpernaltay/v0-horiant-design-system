@@ -1,4 +1,14 @@
+import Link from "next/link"
+
 export function Footer() {
+  const footerLinks = [
+    { label: "About", href: "/" },
+    { label: "Database", href: "/watches" },
+    { label: "Collections", href: "/community" },
+    { label: "Journal", href: "/journal" },
+    { label: "Contact", href: "/" },
+  ]
+
   return (
     <footer className="border-t border-white/[0.04] px-6 py-16">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-8">
@@ -9,17 +19,15 @@ export function Footer() {
 
         {/* Links */}
         <div className="flex flex-wrap justify-center gap-8">
-          {["About", "Database", "Collections", "Journal", "Contact"].map(
-            (link) => (
-              <a
-                key={link}
-                href="#"
-                className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
-              >
-                {link}
-              </a>
-            )
-          )}
+          {footerLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         {/* Divider */}

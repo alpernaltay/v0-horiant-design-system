@@ -3,6 +3,10 @@ import { Inter } from 'next/font/google'
 import { Playfair_Display } from 'next/font/google'
 import { Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { Toaster } from 'sonner'
+import { BackToTop } from '@/components/horiant/back-to-top'
+import { CompareProvider } from '@/context/compare-context'
+import { CompareTray } from '@/components/horiant/compare-tray'
 import './globals.css'
 
 const inter = Inter({
@@ -57,8 +61,23 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        {children}
-        <Analytics />
+        <CompareProvider>
+          {children}
+          <Toaster
+            theme="dark"
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: '#131920',
+                border: '1px solid rgba(255,255,255,0.04)',
+                color: '#e5e5e5',
+              },
+            }}
+          />
+          <Analytics />
+          <BackToTop />
+          <CompareTray />
+        </CompareProvider>
       </body>
     </html>
   )

@@ -1,0 +1,14 @@
+﻿app/compare/page.tsx(63,74): error TS2339: Property 'power_reserve' does not exist on type 'never'.
+app/compare/page.tsx(64,77): error TS2339: Property 'water_res' does not exist on type 'never'.
+app/compare/page.tsx(66,63): error TS2339: Property 'thickness' does not exist on type 'never'.
+app/compare/page.tsx(135,52): error TS2339: Property 'id' does not exist on type 'never'.
+app/compare/page.tsx(139,70): error TS2339: Property 'brand' does not exist on type 'never'.
+app/compare/page.tsx(140,64): error TS2339: Property 'image_url' does not exist on type 'never'.
+app/compare/page.tsx(140,83): error TS2339: Property 'image' does not exist on type 'never'.
+app/compare/page.tsx(141,64): error TS2339: Property 'model' does not exist on type 'never'.
+app/compare/page.tsx(148,60): error TS2339: Property 'brand' does not exist on type 'never'.
+app/compare/page.tsx(150,77): error TS2339: Property 'slug' does not exist on type 'never'.
+app/compare/page.tsx(150,91): error TS2339: Property 'id' does not exist on type 'never'.
+app/compare/page.tsx(151,60): error TS2339: Property 'model' does not exist on type 'never'.
+app/compare/page.tsx(154,60): error TS2339: Property 'reference' does not exist on type 'never'.
+app/compare/page.tsx(185,60): error TS2339: Property 'id' does not exist on type 'never'.

@@ -1,55 +1,35 @@
-"use client"
-
-import { useState } from "react"
 import { TopNav } from "@/components/horiant/top-nav"
 import { HeroSection } from "@/components/horiant/hero-section"
 import { BentoSpecs } from "@/components/horiant/bento-specs"
 import { DiscoverGrid } from "@/components/horiant/discover-grid"
-import { WatchDetail } from "@/components/horiant/watch-detail"
-import { SOTCProfile } from "@/components/horiant/sotc-profile"
+import { ReviewsFeed } from "@/components/horiant/reviews-feed"
+import { WatchFinder } from "@/components/horiant/watch-finder"
 import { Footer } from "@/components/horiant/footer"
-import { featuredWatch, type WatchData } from "@/lib/mock-watches"
+import { getWatches, getFeaturedWatch } from "@/lib/actions/watches"
 
-type View = "discover" | "watchDetail" | "sotcProfile"
+// Force dynamic rendering so Supabase data is fetched on every request
+export const dynamic = "force-dynamic"
 
-export default function Page() {
-  const [activeView, setActiveView] = useState<View>("discover")
-  const [selectedWatch, setSelectedWatch] = useState<WatchData | null>(null)
+export default async function Page() {
+  const [watches, featured] = await Promise.all([
+    getWatches(),
+    getFeaturedWatch(),
+  ])
 
-  function handleSelectWatch(watch: WatchData) {
-    setSelectedWatch(watch)
-    setActiveView("watchDetail")
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
-  function handleNavigate(view: View) {
-    setActiveView(view)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+  // Separate featured watch from the trending list
+  const trendingWatches = watches.filter((w) => w.id !== featured.id)
 
   return (
     <main className="relative min-h-screen bg-background">
-      <TopNav activeView={activeView} onNavigate={handleNavigate} />
+      <TopNav />
 
-      {activeView === "discover" && (
-        <>
-          <HeroSection onViewSpecs={() => handleSelectWatch(featuredWatch)} />
-          <div className="gold-line mx-auto max-w-xs" />
-          <BentoSpecs />
-          <DiscoverGrid onSelectWatch={handleSelectWatch} />
-        </>
-      )}
-
-      {activeView === "watchDetail" && selectedWatch && (
-        <WatchDetail
-          watch={selectedWatch}
-          onBack={() => handleNavigate("discover")}
-        />
-      )}
-
-      {activeView === "sotcProfile" && (
-        <SOTCProfile onSelectWatch={handleSelectWatch} />
-      )}
+      <HeroSection featured={featured} />
+      <div className="gold-line mx-auto max-w-xs" />
+      <BentoSpecs />
+      <DiscoverGrid watches={trendingWatches} />
+      <div className="gold-line mx-auto max-w-xs" />
+      <ReviewsFeed watches={watches} />
+      <WatchFinder />
 
       <Footer />
     </main>

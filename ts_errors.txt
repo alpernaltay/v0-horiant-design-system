@@ -1,0 +1,11 @@
+﻿components/horiant/sotc-profile.tsx(116,17): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+components/horiant/sotc-profile.tsx(161,17): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+components/horiant/watch-detail.tsx(184,19): error TS2339: Property 'wrist_size' does not exist on type 'never'.
+components/horiant/watch-detail.tsx(184,49): error TS2339: Property 'wrist_size' does not exist on type 'never'.
+lib/actions/collections.ts(248,17): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+lib/actions/reviews.ts(48,37): error TS2339: Property 'username' does not exist on type 'never'.
+lib/actions/reviews.ts(48,58): error TS2339: Property 'full_name' does not exist on type 'never'.
+lib/actions/reviews.ts(56,35): error TS2339: Property 'username' does not exist on type 'never'.
+lib/actions/reviews.ts(56,56): error TS2339: Property 'full_name' does not exist on type 'never'.
+lib/actions/reviews.ts(84,21): error TS2345: Argument of type 'any' is not assignable to parameter of type 'never'.
+lib/actions/reviews.ts(84,35): error TS2339: Property 'likes' does not exist on type 'never'.

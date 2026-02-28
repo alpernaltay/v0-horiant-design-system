@@ -7,6 +7,7 @@ import {
   Plane,
   ArrowRight,
 } from "lucide-react"
+import Link from "next/link"
 
 const categories = [
   { icon: <Timer className="h-5 w-5" />, label: "Chronograph" },
@@ -36,25 +37,26 @@ export function WatchFinder() {
         {/* Category Icons Grid */}
         <div className="mx-auto grid max-w-2xl grid-cols-3 gap-4 sm:grid-cols-6">
           {categories.map((cat) => (
-            <button
+            <Link
               key={cat.label}
+              href={`/watches?category=${cat.label}`}
               className="group flex flex-col items-center gap-3 rounded-lg border border-white/[0.04] bg-gradient-to-b from-[#131920]/60 to-[#0d1117]/60 px-3 py-5 transition-all duration-500 hover:border-[#D4AF37]/15 hover:bg-[#D4AF37]/[0.03]"
             >
               <span className="text-muted-foreground/50 transition-colors duration-300 group-hover:text-[#D4AF37]/70">
                 {cat.icon}
               </span>
-              <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground transition-colors duration-300 group-hover:text-foreground">
+              <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground transition-colors duration-300 group-hover:text-foreground text-center">
                 {cat.label}
               </span>
-            </button>
+            </Link>
           ))}
         </div>
 
         {/* CTA */}
-        <button className="group mt-14 inline-flex items-center gap-3 border border-[#D4AF37]/30 px-10 py-4 text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] transition-all duration-500 hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/5">
+        <Link href="/watches" className="group mt-14 inline-flex items-center gap-3 border border-[#D4AF37]/30 px-10 py-4 text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] transition-all duration-500 hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/5">
           Explore the Database
           <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-        </button>
+        </Link>
       </div>
     </section>
   )

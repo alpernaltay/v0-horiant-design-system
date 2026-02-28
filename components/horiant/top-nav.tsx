@@ -1,6 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import Link from "next/link"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Search,
   User,
@@ -22,21 +25,17 @@ import {
   Circle,
   Hexagon,
   Gem,
+  LogIn,
+  LogOut,
 } from "lucide-react"
 import {
   watchStyles,
   movementTypes,
   materials,
   brandGroups,
-  databaseStats,
 } from "@/lib/mock-watches"
-
-type View = "discover" | "watchDetail" | "sotcProfile"
-
-interface TopNavProps {
-  activeView: View
-  onNavigate: (view: View) => void
-}
+import { createClient } from "@/lib/supabase/client"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 const styleIcons: Record<string, React.ReactNode> = {
   Diver: <Anchor className="h-3.5 w-3.5" />,
@@ -60,96 +59,173 @@ const materialIcons: Record<string, React.ReactNode> = {
   Ceramic: <Gem className="h-3.5 w-3.5" />,
 }
 
-export function TopNav({ activeView, onNavigate }: TopNavProps) {
+const mobileMenuVariants = {
+  hidden: { opacity: 0, y: -8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] as const } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] as const } },
+}
+
+function getUserInitials(user: SupabaseUser): string {
+  const meta = user.user_metadata
+  if (meta?.username) return meta.username.slice(0, 2).toUpperCase()
+  if (meta?.full_name) {
+    const parts = meta.full_name.split(" ")
+    return parts.map((p: string) => p[0]).join("").slice(0, 2).toUpperCase()
+  }
+  return (user.email ?? "U").slice(0, 2).toUpperCase()
+}
+
+export function TopNav() {
+  const pathname = usePathname()
+  const router = useRouter()
   const [searchOpen, setSearchOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState("")
+
+  // Determine active state from pathname
+  const isDiscover = pathname === "/"
+  const isCollection = pathname === "/collection"
+
+  // Subscribe to Supabase auth state
+  useEffect(() => {
+    const supabase = createClient()
+
+    // Get initial session
+    supabase.auth.getUser().then(({ data: { user: u } }) => {
+      setUser(u)
+      setAuthLoading(false)
+    })
+
+    // Listen for changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null)
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // Debounced Search Effect
+  useEffect(() => {
+    if (!searchOpen || !searchQuery) return
+    const timer = setTimeout(() => {
+      if (searchQuery.trim()) {
+        router.push(`/watches?q=${encodeURIComponent(searchQuery.trim())}`)
+      }
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery, searchOpen, router])
+
+  async function handleSignOut() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    setUser(null)
+    router.push("/")
+    router.refresh()
+  }
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => { document.body.style.overflow = "" }
+  }, [mobileMenuOpen])
 
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-[#0A0F16]/80 backdrop-blur-2xl">
-        <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-6 lg:px-10">
-          {/* Left Links */}
-          <div className="hidden items-center gap-8 md:flex">
-            <button
-              onClick={() => onNavigate("discover")}
-              className={`text-[10px] uppercase tracking-[0.18em] transition-colors duration-300 ${
-                activeView === "discover"
+        <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-10">
+          {/* 1. Left Links (Desktop) & Hamburger (Mobile) */}
+          <div className="flex items-center justify-start flex-1 transition-all duration-300">
+            <div className="hidden items-center gap-8 md:flex">
+              <Link
+                href="/"
+                className={`text-[10px] uppercase tracking-[0.18em] transition-colors duration-300 ${isDiscover
                   ? "text-foreground"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              Discover
-            </button>
+                  }`}
+              >
+                Discover
+              </Link>
+              <button
+                onMouseEnter={() => setMegaMenuOpen(true)}
+                onClick={() => setMegaMenuOpen(!megaMenuOpen)}
+                className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              >
+                All Watches
+                <ChevronDown
+                  className={`h-3 w-3 transition-transform duration-300 ${megaMenuOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              <Link
+                href="/community"
+                className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              >
+                Community
+              </Link>
+              <Link
+                href="/journal"
+                className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              >
+                Journal
+              </Link>
+            </div>
+
             <button
-              onMouseEnter={() => setMegaMenuOpen(true)}
-              onClick={() => setMegaMenuOpen(!megaMenuOpen)}
-              className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen)
+                setMegaMenuOpen(false)
+              }}
+              className="flex min-h-10 min-w-10 items-center text-muted-foreground transition-colors hover:text-foreground md:hidden"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             >
-              Watches
-              <ChevronDown
-                className={`h-3 w-3 transition-transform duration-300 ${megaMenuOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-            <button className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-300 hover:text-foreground">
-              Community
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => {
-              setMobileMenuOpen(!mobileMenuOpen)
-              setMegaMenuOpen(false)
-            }}
-            className="text-muted-foreground transition-colors hover:text-foreground md:hidden"
-            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          {/* 2. Center Logo */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 pointer-events-auto">
+            <Link
+              href="/"
+              onClick={() => { setMegaMenuOpen(false); setMobileMenuOpen(false) }}
+            >
+              <span className="font-serif text-lg tracking-[0.3em] text-[#D4AF37]">
+                HORIANT
+              </span>
+            </Link>
+          </div>
 
-          {/* Center Logo */}
-          <button
-            onClick={() => {
-              onNavigate("discover")
-              setMegaMenuOpen(false)
-            }}
-            className="absolute left-1/2 -translate-x-1/2"
-          >
-            <span className="font-serif text-lg tracking-[0.3em] text-[#D4AF37]">
-              HORIANT
-            </span>
-          </button>
-
-          {/* Right: Stats + Search + SOTC */}
-          <div className="flex items-center gap-5">
-            {/* Live Stats Widget (desktop) */}
-            <div className="hidden items-center gap-4 border-r border-white/[0.06] pr-5 xl:flex">
-              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                <Database className="h-3 w-3 text-[#D4AF37]/60" />
-                {databaseStats.watches}
-              </span>
-              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                <MessageSquare className="h-3 w-3 text-[#D4AF37]/60" />
-                {databaseStats.reviews}
-              </span>
-              <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                <Users className="h-3 w-3 text-emerald-400/60" />
-                <span className="text-emerald-400/80">{databaseStats.online}</span>
-              </span>
-            </div>
+          {/* 3. Right: Search + Auth */}
+          <div className="flex items-center justify-end gap-4 shrink-0 min-w-max transition-all duration-300 flex-1">
 
             {searchOpen ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
-                  placeholder="Search references, calibers..."
-                  className="w-40 border-b border-[#D4AF37]/30 bg-transparent pb-1 text-xs text-foreground placeholder-muted-foreground/60 outline-none transition-all duration-300 focus:border-[#D4AF37]/60 lg:w-56"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && searchQuery.trim()) {
+                      router.push(`/watches?q=${encodeURIComponent(searchQuery.trim())}`)
+                      setSearchOpen(false)
+                      setMegaMenuOpen(false)
+                    }
+                  }}
+                  placeholder="Search brands, references, calibers..."
+                  className="w-[105px] sm:w-[165px] md:w-[225px] lg:w-[285px] border-b border-[#D4AF37]/30 bg-transparent pb-1 text-xs text-foreground placeholder-muted-foreground/60 outline-none transition-all duration-300 focus:border-[#D4AF37]/60"
                   autoFocus
                 />
                 <button
                   onClick={() => setSearchOpen(false)}
-                  className="text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex min-h-10 min-w-10 items-center justify-center text-muted-foreground transition-colors hover:text-foreground shrink-0"
                   aria-label="Close search"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -158,27 +234,53 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
             ) : (
               <button
                 onClick={() => setSearchOpen(true)}
-                className="text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                className="flex min-h-10 min-w-10 items-center justify-center text-muted-foreground transition-colors duration-300 hover:text-foreground"
                 aria-label="Open search"
               >
                 <Search className="h-4 w-4" />
               </button>
             )}
 
-            <button
-              onClick={() => {
-                onNavigate("sotcProfile")
-                setMegaMenuOpen(false)
-              }}
-              className={`flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] transition-colors duration-300 ${
-                activeView === "sotcProfile"
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <User className="h-4 w-4" />
-              <span className="hidden lg:inline">My SOTC</span>
-            </button>
+            {/* Auth-aware navigation */}
+            {authLoading ? (
+              <div className="flex min-h-10 items-center">
+                <div className="h-4 w-4 animate-pulse rounded-full bg-white/[0.06]" />
+              </div>
+            ) : user ? (
+              /* ── Authenticated ── */
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/collection"
+                  onClick={() => { setMegaMenuOpen(false); setMobileMenuOpen(false) }}
+                  className={`flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] transition-colors duration-300 ${isCollection ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                >
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5">
+                    <span className="text-[9px] font-medium tracking-wider text-[#D4AF37]">
+                      {getUserInitials(user)}
+                    </span>
+                  </div>
+                  <span className="hidden lg:inline whitespace-nowrap">My Collection</span>
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="flex min-h-10 min-w-6 items-center justify-center text-muted-foreground/50 transition-colors duration-300 hover:text-foreground shrink-0"
+                  aria-label="Sign out"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              /* ── Not authenticated ── */
+              <Link
+                href="/login"
+                onClick={() => { setMegaMenuOpen(false); setMobileMenuOpen(false) }}
+                className="flex min-h-10 items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-muted-foreground transition-colors duration-300 hover:text-foreground"
+              >
+                <LogIn className="h-4 w-4" />
+                <span className="hidden lg:inline">Sign In</span>
+              </Link>
+            )}
           </div>
         </div>
       </nav>
@@ -197,16 +299,28 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
               </p>
               <div className="flex flex-col gap-3">
                 {watchStyles.map((style) => (
-                  <button
+                  <Link
                     key={style}
-                    className="group flex items-center gap-3 text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                    href={`/watches?category=${style}`}
+                    onClick={() => setMegaMenuOpen(false)}
+                    className="group flex min-h-10 items-center gap-3 text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     <span className="flex h-7 w-7 items-center justify-center rounded-md border border-white/[0.04] bg-white/[0.02] text-muted-foreground/50 transition-all duration-300 group-hover:border-[#D4AF37]/20 group-hover:text-[#D4AF37]/70">
                       {styleIcons[style]}
                     </span>
                     {style}
-                  </button>
+                  </Link>
                 ))}
+              </div>
+
+              <div className="mt-8 border-t border-white/[0.04] pt-6">
+                <Link
+                  href="/watches"
+                  onClick={() => setMegaMenuOpen(false)}
+                  className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] transition-colors hover:text-[#D4AF37]/70"
+                >
+                  View All Watches &rarr;
+                </Link>
               </div>
             </div>
 
@@ -217,35 +331,39 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
               </p>
               <div className="flex flex-col gap-3">
                 {movementTypes.map((type) => (
-                  <button
+                  <Link
                     key={type}
-                    className="group flex items-center gap-3 text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                    href={`/watches?movement=${type}`}
+                    onClick={() => setMegaMenuOpen(false)}
+                    className="group flex min-h-10 items-center gap-3 text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
                   >
                     <span className="flex h-7 w-7 items-center justify-center rounded-md border border-white/[0.04] bg-white/[0.02] text-muted-foreground/50 transition-all duration-300 group-hover:border-[#D4AF37]/20 group-hover:text-[#D4AF37]/70">
                       {movementIcons[type]}
                     </span>
                     {type}
-                  </button>
+                  </Link>
                 ))}
 
-              <div className="mt-5 border-t border-white/[0.04] pt-5">
-                <p className="mb-4 text-[9px] uppercase tracking-[0.25em] text-[#D4AF37]">
-                  By Material
-                </p>
-                <div className="flex flex-col gap-3">
-                  {materials.map((mat) => (
-                    <button
-                      key={mat}
-                      className="group flex items-center gap-3 text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
-                    >
-                      <span className="flex h-7 w-7 items-center justify-center rounded-md border border-white/[0.04] bg-white/[0.02] text-muted-foreground/50 transition-all duration-300 group-hover:border-[#D4AF37]/20 group-hover:text-[#D4AF37]/70">
-                        {materialIcons[mat]}
-                      </span>
-                      {mat}
-                    </button>
-                  ))}
+                <div className="mt-5 border-t border-white/[0.04] pt-5">
+                  <p className="mb-4 text-[9px] uppercase tracking-[0.25em] text-[#D4AF37]">
+                    By Material
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    {materials.map((mat) => (
+                      <Link
+                        key={mat}
+                        href={`/watches?material=${mat}`}
+                        onClick={() => setMegaMenuOpen(false)}
+                        className="group flex min-h-10 items-center gap-3 text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                      >
+                        <span className="flex h-7 w-7 items-center justify-center rounded-md border border-white/[0.04] bg-white/[0.02] text-muted-foreground/50 transition-all duration-300 group-hover:border-[#D4AF37]/20 group-hover:text-[#D4AF37]/70">
+                          {materialIcons[mat]}
+                        </span>
+                        {mat}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
 
@@ -262,71 +380,75 @@ export function TopNav({ activeView, onNavigate }: TopNavProps) {
                     </p>
                     <div className="flex flex-col gap-2.5">
                       {brands.map((brand) => (
-                        <button
+                        <Link
                           key={brand}
-                          className="text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
+                          href={`/brand/${brand.toLowerCase().replace(/\s+/g, '-')}`}
+                          onClick={() => setMegaMenuOpen(false)}
+                          className="min-h-10 text-left text-sm text-muted-foreground transition-colors duration-300 hover:text-foreground"
                         >
                           {brand}
-                        </button>
+                        </Link>
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Stats bar in mega-menu (mobile only) */}
-              <div className="mt-8 flex items-center gap-6 border-t border-white/[0.04] pt-6 xl:hidden">
-                <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Database className="h-3 w-3 text-[#D4AF37]/60" />
-                  {databaseStats.watches} Watches
-                </span>
-                <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <MessageSquare className="h-3 w-3 text-[#D4AF37]/60" />
-                  {databaseStats.reviews} Reviews
-                </span>
-                <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Users className="h-3 w-3 text-emerald-400/60" />
-                  <span className="text-emerald-400/80">{databaseStats.online} Online</span>
-                </span>
+              <div className="mt-8 border-t border-white/[0.04] pt-6">
+                <Link
+                  href="/brands"
+                  onClick={() => setMegaMenuOpen(false)}
+                  className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] transition-colors hover:text-[#D4AF37]/70"
+                >
+                  View All Brands &rarr;
+                </Link>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-x-0 top-14 z-40 border-b border-border bg-[#0A0F16]/98 px-6 py-6 backdrop-blur-2xl md:hidden">
-          <div className="flex flex-col gap-4">
-            <button
-              onClick={() => { onNavigate("discover"); setMobileMenuOpen(false) }}
-              className={`text-left text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
-                activeView === "discover" ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              Discover
-            </button>
-            <button
-              onClick={() => setMegaMenuOpen(!megaMenuOpen)}
-              className="flex items-center gap-2 text-left text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors duration-300"
-            >
-              Watches
-              <ChevronDown className={`h-3 w-3 transition-transform ${megaMenuOpen ? "rotate-180" : ""}`} />
-            </button>
-            <button className="text-left text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
-              Community
-            </button>
-            <button
-              onClick={() => { onNavigate("sotcProfile"); setMobileMenuOpen(false) }}
-              className={`text-left text-[11px] uppercase tracking-[0.15em] transition-colors duration-300 ${
-                activeView === "sotcProfile" ? "text-foreground" : "text-muted-foreground"
-              }`}
-            >
-              My SOTC
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Mobile Menu — Framer Motion animated */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            variants={mobileMenuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-x-0 top-14 bottom-0 z-40 border-b border-border bg-[#0A0F16]/98 px-6 py-8 backdrop-blur-2xl md:hidden"
+          >
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex min-h-12 items-center rounded-lg px-4 text-left text-[11px] uppercase tracking-[0.15em] transition-all duration-300 ${isDiscover ? "bg-white/[0.03] text-foreground" : "text-muted-foreground"
+                  }`}
+              >
+                Discover
+              </Link>
+              <button
+                onClick={() => setMegaMenuOpen(!megaMenuOpen)}
+                className="flex min-h-12 items-center gap-2 rounded-lg px-4 text-left text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-all duration-300"
+              >
+                All Watches
+                <ChevronDown className={`h-3 w-3 transition-transform ${megaMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+              <button className="flex min-h-12 items-center rounded-lg px-4 text-left text-[11px] uppercase tracking-[0.15em] text-muted-foreground">
+                Community
+              </button>
+              <Link
+                href="/collection"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex min-h-12 items-center rounded-lg px-4 text-left text-[11px] uppercase tracking-[0.15em] transition-all duration-300 ${isCollection ? "bg-white/[0.03] text-foreground" : "text-muted-foreground"
+                  }`}
+              >
+                My Collection
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

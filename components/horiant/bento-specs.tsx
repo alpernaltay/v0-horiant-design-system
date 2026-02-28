@@ -10,7 +10,7 @@ function BentoCard({
 }) {
   return (
     <div
-      className={`card-glow relative overflow-hidden rounded-lg border border-white/[0.04] bg-gradient-to-b from-[#131920] to-[#0d1117] p-8 ${className}`}
+      className={`card-glow relative overflow-hidden rounded-lg border border-white/[0.04] bg-gradient-to-b from-[#131920] to-[#0d1117] p-5 sm:p-8 ${className}`}
     >
       {children}
     </div>
@@ -34,8 +34,8 @@ export function BentoSpecs() {
         {/* Bento Grid */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
           {/* Box 1: Large Image - spans 2 cols, 2 rows */}
-          <BentoCard className="flex items-center justify-center lg:col-span-1 lg:row-span-2">
-            <div className="relative aspect-square w-full">
+          <BentoCard className="flex items-center justify-center md:col-span-2 md:row-span-1 lg:col-span-1 lg:row-span-2">
+            <div className="relative aspect-[4/3] w-full md:aspect-square">
               <Image
                 src="/images/datograph-hero.jpg"
                 alt="A. Lange and Sohne Datograph luxury chronograph watch with rose gold case and white dial"
@@ -96,7 +96,7 @@ export function BentoSpecs() {
           </BentoCard>
 
           {/* Box 4: Market Value - spans 2 cols */}
-          <BentoCard className="lg:col-span-2">
+          <BentoCard className="md:col-span-2 lg:col-span-2">
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
               <div>
                 <p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">
@@ -124,7 +124,7 @@ export function BentoSpecs() {
                   (h, i) => (
                     <div
                       key={i}
-                      className="w-2 rounded-sm bg-emerald-500/20 transition-all duration-300 hover:bg-emerald-500/40"
+                      className="w-2 rounded-sm bg-emerald-500/20 transition-all duration-300 hover:bg-emerald-500/40 sm:w-2.5"
                       style={{ height: `${h}px` }}
                     />
                   )
