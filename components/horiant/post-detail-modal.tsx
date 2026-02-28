@@ -23,6 +23,7 @@ import {
     voteWristRollComment,
     getCommentVotes,
 } from "@/lib/actions/wrist-rolls"
+import { useAuthGate } from "@/context/auth-gate-context"
 
 // ─── Helpers ────────────────────────────────────────────────────
 
@@ -69,6 +70,7 @@ interface CommentVoteState {
 
 export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDetailModalProps) {
     const router = useRouter()
+    const { checkAuth } = useAuthGate()
 
     const [liked, setLiked] = useState(false)
     const [likeCount, setLikeCount] = useState(0)
@@ -116,6 +118,7 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
     // ── Post Actions ──
 
     const handleLike = async () => {
+        if (!checkAuth()) return
         const wasLiked = liked
         setLiked(!wasLiked)
         setLikeCount((c) => (wasLiked ? c - 1 : c + 1))
@@ -143,6 +146,7 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
 
     const handleAddComment = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (!checkAuth()) return
         if (!commentText.trim()) return
         setIsSubmittingComment(true)
         const result = await addWristRollComment(post.id, commentText, null)
@@ -152,6 +156,7 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
     }
 
     const handleAddReply = async (parentId: string) => {
+        if (!checkAuth()) return
         if (!replyText.trim()) return
         setIsSubmittingComment(true)
         const result = await addWristRollComment(post.id, replyText, parentId)
@@ -177,6 +182,7 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
     }
 
     const handleCommentVote = async (commentId: string, voteType: "up" | "down") => {
+        if (!checkAuth()) return
         setCommentVotes((prev) => {
             const current = prev[commentId] ?? { upCount: 0, downCount: 0, userVote: null }
             let { upCount, downCount } = current

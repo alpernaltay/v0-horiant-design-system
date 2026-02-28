@@ -3,6 +3,7 @@
 import { SOTCProfile } from "@/components/horiant/sotc-profile"
 import { TopNav } from "@/components/horiant/top-nav"
 import { Footer } from "@/components/horiant/footer"
+import { AuthGateProvider } from "@/context/auth-gate-context"
 import type { CollectionWatchItem } from "@/lib/actions/collections"
 import type { WishlistWatchItem } from "@/lib/actions/wishlists"
 
@@ -38,24 +39,26 @@ export function CollectionClient({
     initialWristRolls?: any[]
 }) {
     return (
-        <main className="relative min-h-screen bg-background">
-            <TopNav />
-            <SOTCProfile
-                watches={watches}
-                wishlistWatches={wishlistWatches}
-                vaultImageUrl={vaultImageUrl}
-                username={username}
-                wristSize={wristSize}
-                profileId={profileId}
-                initialReviews={initialReviews}
-                currentUserId={currentUserId}
-                isOwner={isOwner}
-                legacyScore={legacyScore}
-                totalPieces={totalPieces}
-                totalComplications={totalComplications}
-                isAdmin={isAdmin}
-                initialWristRolls={initialWristRolls}
-            />
-        </main>
+        <AuthGateProvider currentUserId={currentUserId}>
+            <main className="relative min-h-screen bg-background">
+                <TopNav />
+                <SOTCProfile
+                    watches={watches}
+                    wishlistWatches={wishlistWatches}
+                    vaultImageUrl={vaultImageUrl}
+                    username={username}
+                    wristSize={wristSize}
+                    profileId={profileId}
+                    initialReviews={initialReviews}
+                    currentUserId={currentUserId}
+                    isOwner={isOwner}
+                    legacyScore={legacyScore}
+                    totalPieces={totalPieces}
+                    totalComplications={totalComplications}
+                    isAdmin={isAdmin}
+                    initialWristRolls={initialWristRolls}
+                />
+            </main>
+        </AuthGateProvider>
     )
 }

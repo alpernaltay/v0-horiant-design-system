@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ThumbsUp, ThumbsDown, MessageSquare, CornerDownRight, Edit2, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { voteReview } from "@/lib/actions/reviews"
+import { useAuthGate } from "@/context/auth-gate-context"
 
 export interface ReviewProps {
     id: string
@@ -55,6 +56,7 @@ function getAvatarProps(str: string) {
 
 export function ReviewItem({ review, onReply, onDelete, onEdit, userVotes, isReply = false, level = 0, currentUserId }: ReviewItemProps) {
     const router = useRouter()
+    const { checkAuth } = useAuthGate()
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [replyText, setReplyText] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -89,6 +91,7 @@ export function ReviewItem({ review, onReply, onDelete, onEdit, userVotes, isRep
     const isDisliked = userVote === 'down'
 
     const handleVote = async (type: 'up' | 'down') => {
+        if (!checkAuth()) return
         // 1. OPTIMISTIC UI UPDATE (Instant)
         const previousVote = userVote;
         const previousLikes = likes;

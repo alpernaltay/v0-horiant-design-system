@@ -1,8 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { notFound } from "next/navigation"
-import { TopNav } from "@/components/horiant/top-nav"
-import { Footer } from "@/components/horiant/footer"
-import { SOTCProfile } from "@/components/horiant/sotc-profile"
+import { VaultClient } from "./vault-client"
 import { getReviewsForProfile } from "@/lib/actions/reviews"
 import { getUserCollection } from "@/lib/actions/collections"
 import { getUserWishlist } from "@/lib/actions/wishlists"
@@ -45,7 +43,6 @@ export default async function PublicVaultPage({
         .maybeSingle()
 
     if (!profileRaw && !profileError) {
-        // Fallback: check if username is actually an ID
         const { data: fallbackProfile } = await supabase
             .from('profiles')
             .select('*')
@@ -54,16 +51,13 @@ export default async function PublicVaultPage({
         profileRaw = fallbackProfile
     }
 
-    console.log("DB_QUERY_RESULT:", profileRaw)
     const profile = profileRaw as any;
-
-    console.log("VAULT_DEBUG: Username Param:", username, "Profile Found:", profile);
 
     if (profileError || !profile) {
         notFound()
     }
 
-    // 2. Fetch their collection, wishlist, reviews, wrist rolls, and session in Parallel
+    // 2. Fetch everything in Parallel
     const [
         watches,
         wishlistWatches,
@@ -80,24 +74,18 @@ export default async function PublicVaultPage({
 
     const isOwner = session?.user?.id === profile.id || profile.username === session?.user?.user_metadata?.username;
 
-    // We can fetch wishlist if we want, currently we just map watches
-    // Ensure nested watches array gets flattened if we must
     return (
-        <main className="relative min-h-screen bg-background">
-            <TopNav />
-            <SOTCProfile
-                watches={watches}
-                wishlistWatches={wishlistWatches}
-                vaultImageUrl={profile.vault_image_url}
-                username={profile.username}
-                profileId={profile.id}
-                wristSize={profile.wrist_size}
-                isOwner={isOwner}
-                initialReviews={topLevelReviews}
-                currentUserId={session?.user?.id}
-                initialWristRolls={wristRolls}
-            />
-            <Footer />
-        </main >
+        <VaultClient
+            watches={watches}
+            wishlistWatches={wishlistWatches}
+            vaultImageUrl={profile.vault_image_url}
+            username={profile.username}
+            profileId={profile.id}
+            wristSize={profile.wrist_size}
+            isOwner={isOwner}
+            initialReviews={topLevelReviews}
+            currentUserId={session?.user?.id}
+            initialWristRolls={wristRolls}
+        />
     )
 }

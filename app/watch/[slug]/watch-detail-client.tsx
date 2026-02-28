@@ -3,6 +3,7 @@
 import { WatchDetail } from "@/components/horiant/watch-detail"
 import { TopNav } from "@/components/horiant/top-nav"
 import { Footer } from "@/components/horiant/footer"
+import { AuthGateProvider } from "@/context/auth-gate-context"
 import type { WatchData } from "@/lib/mock-watches"
 
 interface WatchDetailClientProps {
@@ -16,10 +17,12 @@ interface WatchDetailClientProps {
 
 export function WatchDetailClient({ watch, initialReviews, initialInCollection, initialInWishlist, initialWristRolls, currentUserId }: WatchDetailClientProps) {
     return (
-        <main className="relative min-h-screen bg-background">
-            <TopNav />
-            <WatchDetail watch={watch} initialReviews={initialReviews} initialInCollection={initialInCollection} initialInWishlist={initialInWishlist} initialWristRolls={initialWristRolls} currentUserId={currentUserId} />
-            <Footer />
-        </main>
+        <AuthGateProvider currentUserId={currentUserId}>
+            <main className="relative min-h-screen bg-background">
+                <TopNav />
+                <WatchDetail watch={watch} initialReviews={initialReviews} initialInCollection={initialInCollection} initialInWishlist={initialInWishlist} initialWristRolls={initialWristRolls} currentUserId={currentUserId} />
+                <Footer />
+            </main>
+        </AuthGateProvider>
     )
 }

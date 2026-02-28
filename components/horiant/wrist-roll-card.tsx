@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Heart, MessageCircle } from "lucide-react"
 import { toggleWristRollLike, getWristRollLikeStatus } from "@/lib/actions/wrist-rolls"
 import { PostDetailModal } from "./post-detail-modal"
+import { useAuthGate } from "@/context/auth-gate-context"
 
 const formatDate = (dateStr: string) => {
     const d = new Date(dateStr)
@@ -21,6 +22,7 @@ interface WristRollCardProps {
 }
 
 export function WristRollCard({ post, currentUserId }: WristRollCardProps) {
+    const { checkAuth } = useAuthGate()
     const [liked, setLiked] = useState(false)
     const [likeCount, setLikeCount] = useState(0)
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -39,6 +41,7 @@ export function WristRollCard({ post, currentUserId }: WristRollCardProps) {
 
     const handleLike = async (e: React.MouseEvent) => {
         e.stopPropagation()
+        if (!checkAuth()) return
         const wasLiked = liked
         setLiked(!wasLiked)
         setLikeCount((c) => (wasLiked ? c - 1 : c + 1))

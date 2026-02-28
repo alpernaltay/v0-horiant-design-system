@@ -34,6 +34,7 @@ import { WristFitVisualizer } from "./wrist-fit-visualizer"
 import { ReviewItem, type ReviewProps } from "./review-item"
 import { WristRollCard } from "./wrist-roll-card"
 import { WristRollModal } from "./wrist-roll-modal"
+import { useAuthGate } from "@/context/auth-gate-context"
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
@@ -157,6 +158,7 @@ function CarouselWithArrows({ wristRolls, currentUserId }: { wristRolls: any[], 
 
 export function WatchDetail({ watch, initialReviews, initialInCollection, initialInWishlist, initialWristRolls = [], currentUserId }: WatchDetailProps) {
   const router = useRouter()
+  const { checkAuth } = useAuthGate()
   const [inCollection, setInCollection] = useState(initialInCollection || false)
   const [inWishlist, setInWishlist] = useState(initialInWishlist || false)
   const [isWristRollModalOpen, setIsWristRollModalOpen] = useState(false)
@@ -223,6 +225,7 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
 
   async function handleReviewSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!checkAuth()) return
     if (!newTitle.trim()) {
       toast("Review Title is required.", { style: { background: '#131920', color: '#D4AF37', border: '1px solid rgba(212, 175, 55, 0.3)' }, icon: '✨' })
       return
@@ -265,6 +268,7 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
   }
 
   async function handleReply(parentId: string, replyText: string) {
+    if (!checkAuth()) return
     const res = await replyToReview(parentId, replyText, watch.id)
     if (res.success) {
       toast(res.message, { style: { background: '#131920', color: '#D4AF37', border: '1px solid rgba(212, 175, 55, 0.3)' }, icon: '✨' })
@@ -333,6 +337,7 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
   }, [watch.id, currentUserId])
 
   function handleAddToCollection() {
+    if (!checkAuth()) return
     // 1. Optimistic UI toggle
     const previousState = inCollection;
     setInCollection(!inCollection);
@@ -352,6 +357,7 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
   }
 
   function handleAddToWishlist() {
+    if (!checkAuth()) return
     // 1. Optimistic UI toggle
     const previousState = inWishlist;
     setInWishlist(!inWishlist);
