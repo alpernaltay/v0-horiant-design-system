@@ -118,6 +118,17 @@ export async function getWristRollsByWatch(watchIdOrSlug: string) {
     return data ?? []
 }
 
+export async function getWristRollsByProfile(userId: string) {
+    const supabase = await createClient()
+    const { data, error } = await (supabase as any)
+        .from("wrist_rolls")
+        .select(`*, profiles!wrist_rolls_user_id_fkey ( username, avatar_url ), watches ( id, slug, brand, model )`)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+    if (error) { console.error("Error fetching profile wrist rolls:", error.message ?? error); return [] }
+    return data ?? []
+}
+
 // ─── Post Likes ─────────────────────────────────────────────────
 
 export async function toggleWristRollLike(wristRollId: string) {

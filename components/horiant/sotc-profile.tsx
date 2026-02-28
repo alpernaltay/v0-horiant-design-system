@@ -33,6 +33,7 @@ import { SafeImage } from "@/components/horiant/safe-image"
 import { CompareButton } from "./compare-button"
 import { ReviewsFeed } from "./reviews-feed"
 import { WristRollModal } from "./wrist-roll-modal"
+import { WristRollCard } from "./wrist-roll-card"
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 24 },
@@ -53,6 +54,7 @@ interface SOTCProfileProps {
   totalPieces?: number
   totalComplications?: number
   isAdmin?: boolean
+  initialWristRolls?: any[]
 }
 
 export function SOTCProfile({
@@ -68,17 +70,20 @@ export function SOTCProfile({
   legacyScore = 0,
   totalPieces = 0,
   totalComplications = 0,
-  isAdmin = false
+  isAdmin = false,
+  initialWristRolls = []
 }: SOTCProfileProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab')
-  const activeTab = tabParam === 'grails' ? 'wishlist' : 'collection'
+  const activeTab = tabParam === 'grails' ? 'wishlist' : tabParam === 'wrist-shots' ? 'wrist-shots' : 'collection'
 
-  const handleTabChange = (tab: 'collection' | 'wishlist') => {
+  const handleTabChange = (tab: 'collection' | 'wishlist' | 'wrist-shots') => {
     const newParams = new URLSearchParams(searchParams.toString())
     if (tab === 'wishlist') {
       newParams.set('tab', 'grails')
+    } else if (tab === 'wrist-shots') {
+      newParams.set('tab', 'wrist-shots')
     } else {
       newParams.delete('tab')
     }
@@ -394,6 +399,16 @@ export function SOTCProfile({
                 <motion.div layoutId="activeTab" className="absolute bottom-[-1px] left-0 right-0 h-[1px] bg-[#D4AF37]" />
               )}
             </button>
+            <button
+              onClick={() => handleTabChange('wrist-shots')}
+              className={`relative pb-4 text-[11px] uppercase tracking-[0.2em] transition-colors duration-300 ${activeTab === 'wrist-shots' ? 'text-[#D4AF37]' : 'text-muted-foreground hover:text-foreground'
+                }`}
+            >
+              Wrist Shots
+              {activeTab === 'wrist-shots' && (
+                <motion.div layoutId="activeTab" className="absolute bottom-[-1px] left-0 right-0 h-[1px] bg-[#D4AF37]" />
+              )}
+            </button>
           </div>
 
         </div>
@@ -666,7 +681,7 @@ export function SOTCProfile({
               </div>
             </motion.div>
           </>
-        ) : (
+        ) : activeTab === 'wishlist' ? (
           <motion.div
             key="wishlist"
             initial={{ opacity: 0, y: 10 }}
@@ -743,7 +758,46 @@ export function SOTCProfile({
               ))}
             </div>
           </motion.div>
-        )
+        ) : activeTab === 'wrist-shots' ? (
+          <motion.div
+            key="wrist-shots"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="mb-16 sm:mb-24"
+          >
+            <div className="mb-12 sm:mb-16">
+              <p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37] sm:mb-4">
+                Lifestyle
+              </p>
+              <h2 className="font-serif text-2xl font-light tracking-tight text-foreground md:text-3xl lg:text-4xl">
+                <span className="text-balance">{isOwner ? "My Wrist Shots" : "Wrist Shots"}</span>
+              </h2>
+            </div>
+
+            {initialWristRolls.length === 0 ? (
+              <div className="col-span-full py-12 text-center rounded-lg border border-white/[0.04] bg-[#0A0F16]">
+                <p className="text-sm text-muted-foreground p-8">
+                  {isOwner ? "You haven't posted any wrist shots yet." : "No wrist shots have been posted yet."}
+                </p>
+                {isOwner && (
+                  <button
+                    onClick={() => setIsWristRollModalOpen(true)}
+                    className="mt-6 inline-flex min-h-12 items-center justify-center rounded-md border border-[#D4AF37]/40 bg-[#D4AF37]/5 px-8 text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] transition-all hover:bg-[#D4AF37]/10"
+                  >
+                    Post a Wrist-Roll
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {initialWristRolls.map((post: any) => (
+                  <WristRollCard key={post.id} post={post} currentUserId={currentUserId} />
+                ))}
+              </div>
+            )}
+          </motion.div>
+        ) : null
         }
       </div >
 

@@ -88,6 +88,7 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
     const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null)
     const [replyingToId, setReplyingToId] = useState<string | null>(null)
     const [replyText, setReplyText] = useState("")
+    const [expandedReplies, setExpandedReplies] = useState<Record<string, number>>({})
 
     const author = post?.profiles?.username ?? "Collector"
     const watchName = post?.watches ? `${post.watches.brand} ${post.watches.model}` : "Unknown"
@@ -200,6 +201,9 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
         const isCommentOwner = currentUserId === c.user_id
         const isEditingThis = editingCommentId === c.id
         const isReplyingToThis = replyingToId === c.id
+        const expandState = expandedReplies[c.id]
+        const isExpanded = expandState !== undefined
+        const visibleRepliesCount = expandState || 0
 
         return (
             <div key={c.id} style={{ marginLeft: depth > 0 ? `${Math.min(depth, 3) * 16}px` : 0 }}>
@@ -266,10 +270,31 @@ export function PostDetailModal({ isOpen, onClose, post, currentUserId }: PostDe
                     </div>
                 </div>
 
-                {/* Render child replies recursively */}
+                {/* Render child replies recursively (Paginated) */}
                 {c.replies && c.replies.length > 0 && (
                     <div className="border-l border-white/[0.04]">
-                        {c.replies.map((reply: any) => renderComment(reply, depth + 1))}
+                        {!isExpanded ? (
+                            <button
+                                onClick={() => setExpandedReplies(prev => ({ ...prev, [c.id]: 3 }))}
+                                className="ml-4 mt-1 flex items-center gap-2 text-[10px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                            >
+                                <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
+                                View {c.replies.length} {c.replies.length === 1 ? 'reply' : 'replies'}
+                            </button>
+                        ) : (
+                            <div className="mt-2 flex flex-col gap-1">
+                                {c.replies.slice(0, visibleRepliesCount).map((reply: any) => renderComment(reply, depth + 1))}
+                                {visibleRepliesCount < c.replies.length && (
+                                    <button
+                                        onClick={() => setExpandedReplies(prev => ({ ...prev, [c.id]: (prev[c.id] || 3) + 3 }))}
+                                        className="ml-4 mt-2 flex items-center gap-2 text-[10px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                                    >
+                                        <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
+                                        Show more
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

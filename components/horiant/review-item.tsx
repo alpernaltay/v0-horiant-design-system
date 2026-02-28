@@ -67,6 +67,10 @@ export function ReviewItem({ review, onReply, onDelete, onEdit, userVotes, isRep
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
 
+    // Pagination for replies
+    const [repliesExpanded, setRepliesExpanded] = useState(false)
+    const [visibleReplies, setVisibleReplies] = useState(3)
+
     // Explicit UI Component local state injection as requested by user
     const [likes, setLikes] = useState(review.likes || 0);
     const [dislikes, setDislikes] = useState(review.dislikes || 0);
@@ -296,21 +300,46 @@ export function ReviewItem({ review, onReply, onDelete, onEdit, userVotes, isRep
                 )}
             </article>
 
-            {/* Render nested replies */}
-            {review.replies?.map((reply: any) => (
-                <div className="pl-8 border-l border-white/10 ml-4 mt-4" key={reply.id}>
-                    <ReviewItem
-                        review={reply}
-                        onReply={onReply}
-                        onDelete={onDelete}
-                        onEdit={onEdit}
-                        userVotes={userVotes}
-                        isReply={true}
-                        level={level + 1}
-                        currentUserId={currentUserId}
-                    />
+            {/* Render nested replies (Paginated) */}
+            {review.replies && review.replies.length > 0 && (
+                <div className="mt-4 border-l border-white/[0.04]">
+                    {!repliesExpanded ? (
+                        <button
+                            onClick={() => { setRepliesExpanded(true); setVisibleReplies(3); }}
+                            className="ml-4 mt-2 flex items-center gap-2 text-[11px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                        >
+                            <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
+                            View {review.replies.length} {review.replies.length === 1 ? 'reply' : 'replies'}
+                        </button>
+                    ) : (
+                        <div className="flex flex-col gap-1">
+                            {review.replies.slice(0, visibleReplies).map((reply: any) => (
+                                <div className="ml-4 mt-3" key={reply.id}>
+                                    <ReviewItem
+                                        review={reply}
+                                        onReply={onReply}
+                                        onDelete={onDelete}
+                                        onEdit={onEdit}
+                                        userVotes={userVotes}
+                                        isReply={true}
+                                        level={level + 1}
+                                        currentUserId={currentUserId}
+                                    />
+                                </div>
+                            ))}
+                            {visibleReplies < review.replies.length && (
+                                <button
+                                    onClick={() => setVisibleReplies(v => v + 3)}
+                                    className="ml-4 mt-3 flex items-center gap-2 text-[11px] font-medium tracking-wide text-[#D4AF37]/80 transition-colors hover:text-[#D4AF37]"
+                                >
+                                    <span className="h-[1px] w-6 bg-[#D4AF37]/40" />
+                                    Show more
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
-            ))}
+            )}
             {/* Delete Confirmation Modal */}
             {
                 showDeleteModal && (

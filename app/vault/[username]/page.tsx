@@ -6,6 +6,7 @@ import { SOTCProfile } from "@/components/horiant/sotc-profile"
 import { getReviewsForProfile } from "@/lib/actions/reviews"
 import { getUserCollection } from "@/lib/actions/collections"
 import { getUserWishlist } from "@/lib/actions/wishlists"
+import { getWristRollsByProfile } from "@/lib/actions/wrist-rolls"
 import type { Metadata } from 'next'
 
 export const dynamic = "force-dynamic"
@@ -72,6 +73,9 @@ export default async function PublicVaultPage({
     // 3. Fetch reviews directed at this profile
     const topLevelReviews = await getReviewsForProfile(profile.id)
 
+    // 4. Fetch wrist rolls for the new Wrist Shots tab
+    const wristRolls = await getWristRollsByProfile(profile.id)
+
     // We can fetch wishlist if we want, currently we just map watches
     // Ensure nested watches array gets flattened if we must
     return (
@@ -87,6 +91,7 @@ export default async function PublicVaultPage({
                 isOwner={isOwner}
                 initialReviews={topLevelReviews}
                 currentUserId={session?.user?.id}
+                initialWristRolls={wristRolls}
             />
             <Footer />
         </main >
