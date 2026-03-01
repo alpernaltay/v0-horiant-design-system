@@ -7,10 +7,9 @@ import { ReviewsFeed } from "@/components/horiant/reviews-feed"
 import { WatchFinder } from "@/components/horiant/watch-finder"
 import { Footer } from "@/components/horiant/footer"
 import { getWatches, getFeaturedWatch } from "@/lib/actions/watches"
-import { getGrandmasters, getLatestVaults, getTrendingWristRolls, getLatestWristRolls } from "@/lib/actions/social"
+import { getGrandmasters, getLatestVaults, getTrendingWristRolls, getLatestWristRolls } from "@/lib/actions/community"
 import { createClient } from "@/lib/supabase/server"
 
-// Force dynamic rendering so Supabase data is fetched on every request
 export const dynamic = "force-dynamic"
 
 export default async function Page() {
@@ -34,7 +33,6 @@ export default async function Page() {
     supabase.auth.getSession()
   ])
 
-  // Separate featured watch from the trending list
   const trendingWatches = watches.filter((w) => w.id !== featured.id)
 
   return (
@@ -46,7 +44,7 @@ export default async function Page() {
       <BentoSpecs />
       <DiscoverGrid watches={trendingWatches} />
 
-      {/* ── Dynamic Social Hub ── */}
+      {/* ── Dynamic Social Hub (4 carousels, 15 items each) ── */}
       <SocialHubSection
         grandmasters={grandmasters}
         trendingWristRolls={trendingWristRolls}

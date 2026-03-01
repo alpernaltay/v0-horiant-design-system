@@ -1,7 +1,7 @@
 import { TopNav } from "@/components/horiant/top-nav"
 import { Footer } from "@/components/horiant/footer"
 import { CommunityClient } from "./community-client"
-import { getGrandmasters, getLatestVaults, getTrendingWristRolls, getLatestWristRolls } from "@/lib/actions/social"
+import { getGrandmasters, getLatestVaults, getTrendingWristRolls, getLatestWristRolls } from "@/lib/actions/community"
 import { createClient } from "@/lib/supabase/server"
 import type { Metadata } from "next"
 

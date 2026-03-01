@@ -204,7 +204,7 @@ export function TopNav() {
           </div>
 
           {/* 3. Right: Search + Auth */}
-          <div className="flex items-center justify-end gap-4 shrink-0 min-w-max transition-all duration-300 flex-1">
+          <div className="flex items-center justify-end gap-4 shrink-0 min-w-max transition-all duration-300 flex-1 z-10">
 
             {searchOpen ? (
               <div className="flex items-center gap-2">
@@ -220,7 +220,7 @@ export function TopNav() {
                     }
                   }}
                   placeholder="Search brands, references, calibers..."
-                  className="w-[105px] sm:w-[165px] md:w-[225px] lg:w-[285px] border-b border-[#D4AF37]/30 bg-transparent pb-1 text-xs text-foreground placeholder-muted-foreground/60 outline-none transition-all duration-300 focus:border-[#D4AF37]/60"
+                  className="w-[100px] sm:w-[160px] md:w-[200px] lg:w-[260px] max-w-[260px] border-b border-[#D4AF37]/30 bg-transparent pb-1 text-xs text-foreground placeholder-muted-foreground/60 outline-none transition-all duration-300 focus:border-[#D4AF37]/60"
                   autoFocus
                 />
                 <button

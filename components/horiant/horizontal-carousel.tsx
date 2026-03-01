@@ -17,9 +17,9 @@ export function HorizontalCarousel({ title, subtitle, children }: HorizontalCaro
     }
 
     return (
-        <section className="relative py-12 sm:py-16">
+        <section className="relative py-10 sm:py-14">
             {/* Header */}
-            <div className="mb-8 flex items-end justify-between px-1">
+            <div className="mb-6 flex items-end justify-between">
                 <div>
                     {subtitle && (
                         <p className="mb-2 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">
@@ -51,18 +51,10 @@ export function HorizontalCarousel({ title, subtitle, children }: HorizontalCaro
             {/* Scrollable Row */}
             <div
                 ref={scrollRef}
-                className="flex flex-row flex-nowrap gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                className="scrollbar-hide flex flex-row flex-nowrap gap-5 overflow-x-auto pb-4 snap-x snap-mandatory"
             >
                 {children}
             </div>
-
-            {/* Hide scrollbar globally via WebKit */}
-            <style jsx>{`
-                div::-webkit-scrollbar {
-                    display: none;
-                }
-            `}</style>
         </section>
     )
 }

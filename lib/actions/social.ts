@@ -8,7 +8,7 @@ export async function getGrandmasters(limit: number = 15) {
     const supabase = await createClient()
     const { data, error } = await (supabase as any)
         .from("profiles")
-        .select("id, username, avatar_url, vault_image_url, legacy_score, total_pieces")
+        .select("id, username, avatar_url, legacy_score, total_pieces")
         .order("legacy_score", { ascending: false })
         .limit(limit)
     if (error) { console.error("getGrandmasters error:", error.message); return [] }
@@ -19,7 +19,7 @@ export async function getLatestVaults(limit: number = 15) {
     const supabase = await createClient()
     const { data, error } = await (supabase as any)
         .from("profiles")
-        .select("id, username, avatar_url, vault_image_url, legacy_score, total_pieces, created_at")
+        .select("id, username, avatar_url, legacy_score, total_pieces, created_at")
         .order("created_at", { ascending: false })
         .limit(limit)
     if (error) { console.error("getLatestVaults error:", error.message); return [] }
@@ -33,7 +33,6 @@ export async function getTrendingWristRolls(limit: number = 15) {
     const { data, error } = await (supabase as any)
         .from("wrist_rolls")
         .select("*, profiles!wrist_rolls_user_id_fkey(username, avatar_url), watches(brand, model, slug)")
-        .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
         .order("likes", { ascending: false })
         .limit(limit)
     if (error) { console.error("getTrendingWristRolls error:", error.message); return [] }

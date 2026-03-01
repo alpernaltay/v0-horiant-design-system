@@ -75,6 +75,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -109,6 +110,7 @@
 .card-glow {
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .card-glow:hover {
   border-color: rgba(212, 175, 55, 0.15);
   box-shadow: 0 0 40px rgba(212, 175, 55, 0.03);
@@ -118,4 +120,14 @@
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
