@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ChevronDown, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { addToCollection } from "@/lib/actions/collections"
+import { createClient } from "@/lib/supabase/client"
 import type { WatchData } from "@/lib/mock-watches"
 
 interface HeroSectionProps {
@@ -12,9 +14,26 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ featured }: HeroSectionProps) {
+  const router = useRouter()
   const [adding, setAdding] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+
+  // Check auth on mount
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setIsAuthenticated(!!user)
+    })
+  }, [])
 
   async function handleAddToCollection() {
+    // Auth gate: if not logged in, redirect to sign-in with returnTo
+    if (!isAuthenticated) {
+      const returnTo = encodeURIComponent(window.location.pathname)
+      router.push(`/sign-in?returnTo=${returnTo}`)
+      return
+    }
+
     setAdding(true)
     try {
       const result = await addToCollection(featured.id)
@@ -71,7 +90,7 @@ export function HeroSection({ featured }: HeroSectionProps) {
           </Link>
           <button
             onClick={handleAddToCollection}
-            disabled={adding}
+            disabled={adding || isAuthenticated === null}
             className="inline-flex min-h-12 items-center gap-2 px-8 py-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-all duration-500 hover:text-foreground disabled:opacity-50"
           >
             {adding ? (

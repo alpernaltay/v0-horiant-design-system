@@ -40,8 +40,13 @@ export function SocialHubSection({
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
                 <div className="gold-line mx-auto mb-4 max-w-xs" />
 
-                {/* 1. Grandmasters */}
-                <HorizontalCarousel title="Grandmasters" subtitle="Legendary Collectors">
+                {/* 1. Grandmasters — with "GO TO COMMUNITY" link */}
+                <HorizontalCarousel
+                    title="Grandmasters"
+                    subtitle="Legendary Collectors"
+                    href="/community"
+                    linkLabel="GO TO COMMUNITY"
+                >
                     {grandmasters.length > 0
                         ? grandmasters.map((p: any) => (
                             <VaultPreviewCard key={p.id} profile={p} />
@@ -53,7 +58,7 @@ export function SocialHubSection({
                 </HorizontalCarousel>
 
                 {/* 2. Trending In The Wild */}
-                <HorizontalCarousel title="Trending In The Wild" subtitle="Most Admired Wrist Shots">
+                <HorizontalCarousel title="Trending In The Wild" subtitle="Most Admired Wrist Shots" href="/community">
                     {trendingWristRolls.length > 0
                         ? trendingWristRolls.map((wr: any) => (
                             <div key={wr.id} className="w-[280px] flex-shrink-0 snap-start">
@@ -67,7 +72,7 @@ export function SocialHubSection({
                 </HorizontalCarousel>
 
                 {/* 3. Newly Curated Vaults */}
-                <HorizontalCarousel title="Newly Curated Vaults" subtitle="Fresh Collections">
+                <HorizontalCarousel title="Newly Curated Vaults" subtitle="Fresh Collections" href="/community">
                     {latestVaults.length > 0
                         ? latestVaults.map((p: any) => (
                             <VaultPreviewCard key={p.id} profile={p} />
@@ -79,7 +84,7 @@ export function SocialHubSection({
                 </HorizontalCarousel>
 
                 {/* 4. Latest Wrist Shots */}
-                <HorizontalCarousel title="Latest Wrist Shots" subtitle="Just Posted">
+                <HorizontalCarousel title="Latest Wrist Shots" subtitle="Just Posted" href="/community">
                     {latestWristRolls.length > 0
                         ? latestWristRolls.map((wr: any) => (
                             <div key={wr.id} className="w-[280px] flex-shrink-0 snap-start">
