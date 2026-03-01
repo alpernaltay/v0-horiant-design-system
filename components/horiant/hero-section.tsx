@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+
 import Link from "next/link"
-import { ChevronDown, Loader2 } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useAuthGate } from "@/context/auth-gate-context"
 import type { WatchData } from "@/lib/mock-watches"
@@ -61,7 +61,7 @@ export function HeroSection({ featured }: HeroSectionProps) {
           </Link>
           <button
             onClick={handleAddToCollectionClick}
-            className="inline-flex min-h-12 items-center gap-2 px-8 py-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-all duration-500 hover:text-foreground"
+            className="inline-flex min-h-12 cursor-pointer items-center gap-2 px-8 py-3 text-[11px] uppercase tracking-[0.2em] text-muted-foreground transition-all duration-500 hover:text-foreground"
           >
             Add to Collection
           </button>

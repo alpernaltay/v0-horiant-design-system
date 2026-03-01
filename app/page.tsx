@@ -1,14 +1,13 @@
 import { TopNav } from "@/components/horiant/top-nav"
-import { HeroSection } from "@/components/horiant/hero-section"
 import { BentoSpecs } from "@/components/horiant/bento-specs"
 import { DiscoverGrid } from "@/components/horiant/discover-grid"
-import { SocialHubSection } from "@/components/horiant/social-hub-section"
 import { ReviewsFeed } from "@/components/horiant/reviews-feed"
 import { WatchFinder } from "@/components/horiant/watch-finder"
 import { Footer } from "@/components/horiant/footer"
 import { getWatches, getFeaturedWatch } from "@/lib/actions/watches"
 import { getGrandmasters, getLatestVaults, getTrendingWristRolls, getLatestWristRolls } from "@/lib/actions/community"
 import { createClient } from "@/lib/supabase/server"
+import { HomepageClient } from "@/components/horiant/homepage-client"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -40,19 +39,19 @@ export default async function Page() {
     <main className="relative min-h-screen bg-background">
       <TopNav />
 
-      <HeroSection featured={featured} />
-      <div className="gold-line mx-auto max-w-xs" />
-      <BentoSpecs />
-      <DiscoverGrid watches={trendingWatches} />
-
-      {/* ── Dynamic Social Hub (4 carousels, 15 items each) ── */}
-      <SocialHubSection
+      {/* AuthGateProvider wraps both HeroSection and SocialHubSection */}
+      <HomepageClient
+        featured={featured}
         grandmasters={grandmasters}
         trendingWristRolls={trendingWristRolls}
         latestVaults={latestVaults}
         latestWristRolls={latestWristRolls}
         currentUserId={session?.user?.id}
       />
+
+      <div className="gold-line mx-auto max-w-xs" />
+      <BentoSpecs />
+      <DiscoverGrid watches={trendingWatches} />
 
       <ReviewsFeed watches={watches} />
       <WatchFinder />
