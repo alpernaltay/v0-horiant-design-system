@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { SafeImage } from "./safe-image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -341,7 +341,20 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
     // 1. Optimistic UI toggle
     const previousState = inCollection;
     setInCollection(!inCollection);
-    toast.success(!inCollection ? "Added to your collection!" : "Removed from your collection", { style: { background: '#131920', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' } })
+    toast(
+      <div className="flex items-center justify-between w-full gap-4">
+        <span>{!inCollection ? "Added to your collection!" : "Removed from your collection"}</span>
+        {!inCollection && (
+          <button
+            onClick={() => router.push('/collection')}
+            className="shrink-0 text-[10px] font-medium uppercase tracking-[0.15em] text-[#D4AF37] underline underline-offset-2 hover:text-[#D4AF37]/80"
+          >
+            View Vault
+          </button>
+        )}
+      </div>,
+      { style: { background: '#131920', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' } }
+    )
 
     // 2. Background server action
     toggleCollection(watch.id).then((result) => {
@@ -362,7 +375,20 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
     const previousState = inWishlist;
     setInWishlist(!inWishlist);
 
-    toast.success(!inWishlist ? "Added to your Grails!" : "Removed from your Grails", { style: { background: '#131920', color: '#D4AF37', border: '1px solid rgba(212, 175, 55, 0.3)' }, icon: '✨' });
+    toast(
+      <div className="flex items-center justify-between w-full gap-4">
+        <span>{!inWishlist ? "Added to your Grails!" : "Removed from your Grails"}</span>
+        {!inWishlist && (
+          <button
+            onClick={() => router.push('/collection?tab=grails')}
+            className="shrink-0 text-[10px] font-medium uppercase tracking-[0.15em] text-[#D4AF37] underline underline-offset-2 hover:text-[#D4AF37]/80"
+          >
+            View Grails
+          </button>
+        )}
+      </div>,
+      { style: { background: '#131920', color: '#D4AF37', border: '1px solid rgba(212, 175, 55, 0.3)' }, icon: '✨' }
+    );
 
     // 2. Background server action
     toggleWishlist(watch.id).then((result) => {
@@ -378,6 +404,14 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
   }
 
   const hasReviewed = currentUserId ? reviews.some(r => r.user_id === currentUserId && !r.parent_id) : false;
+
+  // Aggregated rating
+  const { averageRating, ratingCount } = useMemo(() => {
+    const rated = reviews.filter(r => r.rating && !r.parent_id);
+    if (rated.length === 0) return { averageRating: 0, ratingCount: 0 };
+    const sum = rated.reduce((acc: number, r: any) => acc + (r.rating || 0), 0);
+    return { averageRating: Math.round((sum / rated.length) * 10) / 10, ratingCount: rated.length };
+  }, [reviews]);
 
   return (
     <section className="relative min-h-screen px-4 pt-24 pb-20 sm:px-6 lg:pt-32 lg:pb-24">
@@ -755,6 +789,21 @@ export function WatchDetail({ watch, initialReviews, initialInCollection, initia
               )}
             </div>
           </div>
+
+          {/* ── Aggregated Rating Display ── */}
+          {ratingCount > 0 && (
+            <div className="mb-10 flex items-center gap-5 rounded-lg border border-white/[0.04] bg-[#0A0F16]/60 px-6 py-5">
+              <span className="font-serif text-4xl font-light tracking-tight text-foreground">{averageRating.toFixed(1)}</span>
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className={`h-4 w-4 ${s <= Math.round(averageRating) ? 'fill-[#D4AF37] text-[#D4AF37]' : 'text-muted-foreground/20'}`} />
+                  ))}
+                </div>
+                <span className="text-[11px] tracking-wide text-muted-foreground/60">based on {ratingCount} {ratingCount === 1 ? 'review' : 'reviews'}</span>
+              </div>
+            </div>
+          )}
 
           {showReviewForm && (
             <motion.form

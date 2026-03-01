@@ -86,13 +86,17 @@ export function HeroSection({ featured }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2">
+      {/* Scroll indicator — clickable */}
+      <button
+        onClick={() => document.getElementById('specs')?.scrollIntoView({ behavior: 'smooth' })}
+        className="absolute bottom-10 left-1/2 flex -translate-x-1/2 cursor-pointer flex-col items-center gap-2 transition-opacity hover:opacity-80"
+        aria-label="Scroll to content"
+      >
         <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/50">
           Scroll
         </span>
         <ChevronDown className="h-4 w-4 animate-bounce text-muted-foreground/30" />
-      </div>
+      </button>
     </section>
   )
 }
