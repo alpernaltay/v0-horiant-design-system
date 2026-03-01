@@ -139,20 +139,27 @@ export async function toggleWristRollLike(wristRollId: string) {
     const { data: existing } = await (supabase as any)
         .from("wrist_roll_likes").select("id").eq("user_id", user.id).eq("wrist_roll_id", wristRollId).maybeSingle()
 
+    // Fetch current counts from main table
+    const { data: postRaw } = await (supabase as any)
+        .from('wrist_rolls')
+        .select('likes')
+        .eq('id', wristRollId)
+        .single();
+    const currentLikes = postRaw?.likes || 0;
+
     if (existing) {
         await (supabase as any).from("wrist_roll_likes").delete().eq("id", existing.id)
-    } else {
-        await (supabase as any).from("wrist_roll_likes").insert({ user_id: user.id, wrist_roll_id: wristRollId })
+        const newCount = Math.max(0, currentLikes - 1);
+        await (supabase as any).from("wrist_rolls").update({ likes: newCount }).eq("id", wristRollId)
+        revalidateAll()
+        return { liked: false }
     }
 
-    // Sync likes count on the wrist_rolls row
-    const { count } = await (supabase as any)
-        .from("wrist_roll_likes").select("*", { count: "exact", head: true }).eq("wrist_roll_id", wristRollId)
-    await (supabase as any)
-        .from("wrist_rolls").update({ likes: count ?? 0 }).eq("id", wristRollId)
-
+    await (supabase as any).from("wrist_roll_likes").insert({ user_id: user.id, wrist_roll_id: wristRollId })
+    const newCount = currentLikes + 1;
+    await (supabase as any).from("wrist_rolls").update({ likes: newCount }).eq("id", wristRollId)
     revalidateAll()
-    return { liked: !existing }
+    return { liked: true }
 }
 
 export async function getWristRollLikeStatus(wristRollId: string) {

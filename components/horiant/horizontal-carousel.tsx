@@ -7,11 +7,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 interface HorizontalCarouselProps {
     title: string
     subtitle?: string
-    titleHref?: string
+    href?: string
     children: React.ReactNode
 }
 
-export function HorizontalCarousel({ title, subtitle, titleHref, children }: HorizontalCarouselProps) {
+export function HorizontalCarousel({ title, subtitle, href, children }: HorizontalCarouselProps) {
     const scrollRef = useRef<HTMLDivElement>(null)
 
     const scroll = (dir: number) => {
@@ -28,9 +28,11 @@ export function HorizontalCarousel({ title, subtitle, titleHref, children }: Hor
                             {subtitle}
                         </p>
                     )}
-                    {titleHref ? (
-                        <Link href={titleHref} className="font-serif text-2xl font-light tracking-tight text-foreground transition-colors hover:text-[#D4AF37] md:text-3xl">
-                            {title}
+                    {href ? (
+                        <Link href={href} className="group">
+                            <h2 className="font-serif text-2xl font-light tracking-tight text-foreground transition-colors group-hover:text-[#D4AF37] md:text-3xl">
+                                {title}
+                            </h2>
                         </Link>
                     ) : (
                         <h2 className="font-serif text-2xl font-light tracking-tight text-foreground md:text-3xl">

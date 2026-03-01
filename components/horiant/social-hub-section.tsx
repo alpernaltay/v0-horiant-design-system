@@ -1,10 +1,10 @@
 "use client"
 
-import Link from "next/link"
 import { HorizontalCarousel } from "./horizontal-carousel"
 import { VaultPreviewCard, VaultPreviewSkeleton } from "./vault-preview-card"
 import { WristRollCard } from "./wrist-roll-card"
 import { AuthGateProvider } from "@/context/auth-gate-context"
+import Link from "next/link"
 
 interface SocialHubSectionProps {
     grandmasters: any[]
@@ -39,20 +39,20 @@ export function SocialHubSection({
     return (
         <AuthGateProvider currentUserId={currentUserId}>
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
-                <div className="gold-line mx-auto mb-4 max-w-xs" />
+                <div className="gold-line mx-auto mb-8 max-w-xs" />
 
-                {/* Go to Community link */}
-                <div className="flex justify-end py-4">
+                <div className="mb-4 flex justify-end px-1">
                     <Link
                         href="/community"
-                        className="inline-flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-[#D4AF37] transition-opacity hover:opacity-80"
+                        className="group inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 px-6 py-2 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37] transition-all hover:bg-[#D4AF37]/20"
                     >
-                        Go to Community <span className="text-xs">→</span>
+                        Go to Community
+                        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                     </Link>
                 </div>
 
                 {/* 1. Grandmasters */}
-                <HorizontalCarousel title="Grandmasters" subtitle="Legendary Collectors" titleHref="/community">
+                <HorizontalCarousel title="Grandmasters" subtitle="Legendary Collectors" href="/community">
                     {grandmasters.length > 0
                         ? grandmasters.map((p: any) => (
                             <VaultPreviewCard key={p.id} profile={p} />
@@ -64,7 +64,7 @@ export function SocialHubSection({
                 </HorizontalCarousel>
 
                 {/* 2. Trending In The Wild */}
-                <HorizontalCarousel title="Trending In The Wild" subtitle="Most Admired Wrist Shots" titleHref="/community">
+                <HorizontalCarousel title="Trending In The Wild" subtitle="Most Admired Wrist Shots" href="/community">
                     {trendingWristRolls.length > 0
                         ? trendingWristRolls.map((wr: any) => (
                             <div key={wr.id} className="w-[280px] flex-shrink-0 snap-start">
@@ -78,7 +78,7 @@ export function SocialHubSection({
                 </HorizontalCarousel>
 
                 {/* 3. Newly Curated Vaults */}
-                <HorizontalCarousel title="Newly Curated Vaults" subtitle="Fresh Collections" titleHref="/community">
+                <HorizontalCarousel title="Newly Curated Vaults" subtitle="Fresh Collections" href="/community">
                     {latestVaults.length > 0
                         ? latestVaults.map((p: any) => (
                             <VaultPreviewCard key={p.id} profile={p} />
@@ -90,7 +90,7 @@ export function SocialHubSection({
                 </HorizontalCarousel>
 
                 {/* 4. Latest Wrist Shots */}
-                <HorizontalCarousel title="Latest Wrist Shots" subtitle="Just Posted" titleHref="/community">
+                <HorizontalCarousel title="Latest Wrist Shots" subtitle="Just Posted" href="/community">
                     {latestWristRolls.length > 0
                         ? latestWristRolls.map((wr: any) => (
                             <div key={wr.id} className="w-[280px] flex-shrink-0 snap-start">
