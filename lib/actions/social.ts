@@ -8,7 +8,7 @@ export async function getGrandmasters(limit: number = 15) {
     const supabase = await createClient()
     const { data, error } = await (supabase as any)
         .from("profiles")
-        .select("id, username, avatar_url, legacy_score, total_pieces")
+        .select("id, username, avatar_url, vault_image_url, legacy_score, total_pieces")
         .order("legacy_score", { ascending: false })
         .limit(limit)
     if (error) { console.error("getGrandmasters error:", error.message); return [] }
@@ -19,7 +19,7 @@ export async function getLatestVaults(limit: number = 15) {
     const supabase = await createClient()
     const { data, error } = await (supabase as any)
         .from("profiles")
-        .select("id, username, avatar_url, legacy_score, total_pieces, created_at")
+        .select("id, username, avatar_url, vault_image_url, legacy_score, total_pieces, created_at")
         .order("created_at", { ascending: false })
         .limit(limit)
     if (error) { console.error("getLatestVaults error:", error.message); return [] }

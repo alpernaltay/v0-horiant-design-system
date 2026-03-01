@@ -1,7 +1,7 @@
 "use client"
 
 import { HorizontalCarousel } from "./horizontal-carousel"
-import { VaultCard } from "./vault-card"
+import { VaultPreviewCard } from "./vault-preview-card"
 import { WristRollCard } from "./wrist-roll-card"
 import { AuthGateProvider } from "@/context/auth-gate-context"
 
@@ -27,8 +27,8 @@ export function SocialHubSection({
 
                 {grandmasters.length > 0 && (
                     <HorizontalCarousel title="Grandmasters" subtitle="Legendary Collectors">
-                        {grandmasters.map((p: any) => (
-                            <VaultCard key={p.id} profile={p} />
+                        {grandmasters.map((p: any, i: number) => (
+                            <VaultPreviewCard key={p.id} profile={p} rank={i + 1} />
                         ))}
                     </HorizontalCarousel>
                 )}
@@ -46,7 +46,7 @@ export function SocialHubSection({
                 {latestVaults.length > 0 && (
                     <HorizontalCarousel title="Newly Curated Vaults" subtitle="Fresh Collections">
                         {latestVaults.map((p: any) => (
-                            <VaultCard key={p.id} profile={p} />
+                            <VaultPreviewCard key={p.id} profile={p} />
                         ))}
                     </HorizontalCarousel>
                 )}

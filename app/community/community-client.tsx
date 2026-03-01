@@ -1,7 +1,7 @@
 "use client"
 
 import { HorizontalCarousel } from "@/components/horiant/horizontal-carousel"
-import { VaultCard } from "@/components/horiant/vault-card"
+import { VaultPreviewCard } from "@/components/horiant/vault-preview-card"
 import { WristRollCard } from "@/components/horiant/wrist-roll-card"
 import { AuthGateProvider } from "@/context/auth-gate-context"
 import { motion } from "framer-motion"
@@ -45,14 +45,14 @@ export function CommunityClient({
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
-                {/* ──── THE GRANDMASTERS (Top 3) ──── */}
+                {/* ──── THE PANTHEON — Top 3 Vaults ──── */}
                 {heroVaults.length > 0 && (
                     <section className="mb-16 sm:mb-24">
                         <div className="mb-10 text-center">
-                            <p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">Hall of Legends</p>
+                            <p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">The Pantheon</p>
                             <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl">The Grandmasters</h2>
                         </div>
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div className="flex flex-col gap-6">
                             {heroVaults.map((p: any, i: number) => (
                                 <motion.div
                                     key={p.id}
@@ -60,14 +60,14 @@ export function CommunityClient({
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.15, duration: 0.5 }}
                                 >
-                                    <VaultCard profile={p} size="hero" />
+                                    <VaultPreviewCard profile={p} rank={i + 1} variant="hero" />
                                 </motion.div>
                             ))}
                         </div>
                     </section>
                 )}
 
-                {/* ──── HALL OF FAME — WRIST ROLLS (Top 3) ──── */}
+                {/* ──── HALL OF FAME — Top 3 Wrist Rolls ──── */}
                 {heroWristRolls.length > 0 && (
                     <section className="mb-16 sm:mb-24">
                         <div className="gold-line mx-auto mb-12 max-w-xs" />
@@ -96,7 +96,7 @@ export function CommunityClient({
                 {carouselVaults.length > 0 && (
                     <HorizontalCarousel title="Best Vaults" subtitle="Ranked by Legacy Score">
                         {carouselVaults.map((p: any) => (
-                            <VaultCard key={p.id} profile={p} />
+                            <VaultPreviewCard key={p.id} profile={p} />
                         ))}
                     </HorizontalCarousel>
                 )}
@@ -114,7 +114,7 @@ export function CommunityClient({
                 {latestVaults.length > 0 && (
                     <HorizontalCarousel title="Newly Curated Vaults" subtitle="Fresh Collections">
                         {latestVaults.map((p: any) => (
-                            <VaultCard key={p.id} profile={p} />
+                            <VaultPreviewCard key={p.id} profile={p} />
                         ))}
                     </HorizontalCarousel>
                 )}
