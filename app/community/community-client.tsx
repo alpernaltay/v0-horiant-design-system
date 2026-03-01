@@ -45,29 +45,30 @@ export function CommunityClient({
 
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
 
-                {/* ──── THE PANTHEON — Top 3 Vaults ──── */}
+                {/* ──── THE GRANDMASTERS (Top 3) ──── */}
                 {heroVaults.length > 0 && (
                     <section className="mb-16 sm:mb-24">
                         <div className="mb-10 text-center">
-                            <p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">The Pantheon</p>
-                            <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl">The Grandmasters</h2>
+                            <p className="mb-3 text-[10px] uppercase tracking-[0.25em] text-[#D4AF37]">Hall of Legends</p>
+                            <h2 className="font-serif text-3xl font-light tracking-tight text-foreground md:text-4xl">The Pantheon</h2>
                         </div>
-                        <div className="flex flex-col gap-6">
+                        <div className="flex flex-col gap-6 md:grid md:grid-cols-3">
                             {heroVaults.map((p: any, i: number) => (
                                 <motion.div
                                     key={p.id}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.15, duration: 0.5 }}
+                                    className="w-full flex"
                                 >
-                                    <VaultPreviewCard profile={p} rank={i + 1} variant="hero" />
+                                    <VaultPreviewCard profile={p} size="hero" isGrandmaster={true} />
                                 </motion.div>
                             ))}
                         </div>
                     </section>
                 )}
 
-                {/* ──── HALL OF FAME — Top 3 Wrist Rolls ──── */}
+                {/* ──── HALL OF FAME — WRIST ROLLS (Top 3) ──── */}
                 {heroWristRolls.length > 0 && (
                     <section className="mb-16 sm:mb-24">
                         <div className="gold-line mx-auto mb-12 max-w-xs" />
@@ -96,7 +97,7 @@ export function CommunityClient({
                 {carouselVaults.length > 0 && (
                     <HorizontalCarousel title="Best Vaults" subtitle="Ranked by Legacy Score">
                         {carouselVaults.map((p: any) => (
-                            <VaultPreviewCard key={p.id} profile={p} />
+                            <VaultPreviewCard key={p.id} profile={p} isGrandmaster={true} />
                         ))}
                     </HorizontalCarousel>
                 )}

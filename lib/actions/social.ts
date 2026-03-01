@@ -33,6 +33,7 @@ export async function getTrendingWristRolls(limit: number = 15) {
     const { data, error } = await (supabase as any)
         .from("wrist_rolls")
         .select("*, profiles!wrist_rolls_user_id_fkey(username, avatar_url), watches(brand, model, slug)")
+        .gte("created_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
         .order("likes", { ascending: false })
         .limit(limit)
     if (error) { console.error("getTrendingWristRolls error:", error.message); return [] }

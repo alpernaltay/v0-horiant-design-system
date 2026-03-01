@@ -26,9 +26,9 @@ export function SocialHubSection({
                 <div className="gold-line mx-auto mb-8 max-w-xs" />
 
                 {grandmasters.length > 0 && (
-                    <HorizontalCarousel title="Grandmasters" subtitle="Legendary Collectors">
-                        {grandmasters.map((p: any, i: number) => (
-                            <VaultPreviewCard key={p.id} profile={p} rank={i + 1} />
+                    <HorizontalCarousel title="Grandmasters" subtitle="Trending Vaults">
+                        {grandmasters.map((p: any) => (
+                            <VaultPreviewCard key={p.id} profile={p} isGrandmaster={true} />
                         ))}
                     </HorizontalCarousel>
                 )}
