@@ -11,6 +11,7 @@ import { getGrandmasters, getLatestVaults, getTrendingWristRolls, getLatestWrist
 import { createClient } from "@/lib/supabase/server"
 
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function Page() {
   const supabase = await createClient()

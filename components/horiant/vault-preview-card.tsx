@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
 
 const PLACEHOLDER_IMG = "https://images.unsplash.com/photo-1547996160-81dfa63595aa?q=80&w=600&auto=format&fit=crop"
 
@@ -20,7 +19,7 @@ interface VaultPreviewCardProps {
 export function VaultPreviewCard({ profile, size = "normal" }: VaultPreviewCardProps) {
     const initial = (profile.username || "?").charAt(0).toUpperCase()
     const isHero = size === "hero"
-    const [imgSrc, setImgSrc] = useState(profile.vault_image_url || PLACEHOLDER_IMG)
+    const coverImg = profile.vault_image_url || PLACEHOLDER_IMG
 
     return (
         <Link
@@ -30,10 +29,9 @@ export function VaultPreviewCard({ profile, size = "normal" }: VaultPreviewCardP
             {/* Cover Image — landscape 16:9 */}
             <div className="relative aspect-[16/9] w-full overflow-hidden">
                 <img
-                    src={imgSrc}
+                    src={coverImg}
                     alt={`${profile.username || "Collector"}'s vault`}
                     className="h-full w-full object-cover opacity-60 transition-all duration-500 group-hover:scale-105 group-hover:opacity-80"
-                    onError={() => setImgSrc(PLACEHOLDER_IMG)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0A0F16] via-transparent to-transparent" />
 

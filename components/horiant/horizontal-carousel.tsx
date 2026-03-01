@@ -7,14 +7,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 interface HorizontalCarouselProps {
     title: string
     subtitle?: string
+    titleHref?: string
     children: React.ReactNode
-    /** Optional link for title + small "GO TO" link. If provided, title becomes clickable. */
-    href?: string
-    /** Label for the small link in top-right, e.g. "GO TO COMMUNITY" */
-    linkLabel?: string
 }
 
-export function HorizontalCarousel({ title, subtitle, children, href, linkLabel }: HorizontalCarouselProps) {
+export function HorizontalCarousel({ title, subtitle, titleHref, children }: HorizontalCarouselProps) {
     const scrollRef = useRef<HTMLDivElement>(null)
 
     const scroll = (dir: number) => {
@@ -31,11 +28,9 @@ export function HorizontalCarousel({ title, subtitle, children, href, linkLabel 
                             {subtitle}
                         </p>
                     )}
-                    {href ? (
-                        <Link href={href} className="group">
-                            <h2 className="font-serif text-2xl font-light tracking-tight text-foreground transition-colors duration-300 group-hover:text-[#D4AF37] md:text-3xl">
-                                {title}
-                            </h2>
+                    {titleHref ? (
+                        <Link href={titleHref} className="font-serif text-2xl font-light tracking-tight text-foreground transition-colors hover:text-[#D4AF37] md:text-3xl">
+                            {title}
                         </Link>
                     ) : (
                         <h2 className="font-serif text-2xl font-light tracking-tight text-foreground md:text-3xl">
@@ -43,33 +38,21 @@ export function HorizontalCarousel({ title, subtitle, children, href, linkLabel 
                         </h2>
                     )}
                 </div>
-                <div className="flex items-center gap-4">
-                    {/* Optional CTA link */}
-                    {href && linkLabel && (
-                        <Link
-                            href={href}
-                            className="hidden text-[9px] uppercase tracking-[0.2em] text-[#D4AF37]/70 transition-colors hover:text-[#D4AF37] sm:inline-flex items-center gap-1"
-                        >
-                            {linkLabel} <span className="text-xs">→</span>
-                        </Link>
-                    )}
-                    {/* Arrow nav */}
-                    <div className="hidden items-center gap-2 sm:flex">
-                        <button
-                            onClick={() => scroll(-1)}
-                            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.08] bg-[#0A0F16] text-muted-foreground transition-colors hover:border-[#D4AF37]/30 hover:text-[#D4AF37]"
-                            aria-label="Scroll left"
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                        </button>
-                        <button
-                            onClick={() => scroll(1)}
-                            className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.08] bg-[#0A0F16] text-muted-foreground transition-colors hover:border-[#D4AF37]/30 hover:text-[#D4AF37]"
-                            aria-label="Scroll right"
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                        </button>
-                    </div>
+                <div className="hidden items-center gap-2 sm:flex">
+                    <button
+                        onClick={() => scroll(-1)}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.08] bg-[#0A0F16] text-muted-foreground transition-colors hover:border-[#D4AF37]/30 hover:text-[#D4AF37]"
+                        aria-label="Scroll left"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                        onClick={() => scroll(1)}
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.08] bg-[#0A0F16] text-muted-foreground transition-colors hover:border-[#D4AF37]/30 hover:text-[#D4AF37]"
+                        aria-label="Scroll right"
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                    </button>
                 </div>
             </div>
 

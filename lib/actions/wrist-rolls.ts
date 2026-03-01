@@ -141,13 +141,18 @@ export async function toggleWristRollLike(wristRollId: string) {
 
     if (existing) {
         await (supabase as any).from("wrist_roll_likes").delete().eq("id", existing.id)
-        revalidateAll()
-        return { liked: false }
+    } else {
+        await (supabase as any).from("wrist_roll_likes").insert({ user_id: user.id, wrist_roll_id: wristRollId })
     }
 
-    await (supabase as any).from("wrist_roll_likes").insert({ user_id: user.id, wrist_roll_id: wristRollId })
+    // Sync likes count on the wrist_rolls row
+    const { count } = await (supabase as any)
+        .from("wrist_roll_likes").select("*", { count: "exact", head: true }).eq("wrist_roll_id", wristRollId)
+    await (supabase as any)
+        .from("wrist_rolls").update({ likes: count ?? 0 }).eq("id", wristRollId)
+
     revalidateAll()
-    return { liked: true }
+    return { liked: !existing }
 }
 
 export async function getWristRollLikeStatus(wristRollId: string) {
